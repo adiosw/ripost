@@ -1,0 +1,15 @@
+/* MOBILE FIX - dołącz JAKO OSTATNI */
+html,body{max-width:100vw;overflow-x:hidden!important}
+.container{max-width:100%;padding:0 1rem!important}
+.hero-title{font-size:2rem!important;word-break:break-word}
+.gradient-text{font-size:2rem!important;word-break:break-word}
+.hero-subtitle{font-size:1rem!important;padding:0 1rem}
+.hero-cta{width:100%;padding:0 1rem}
+.btn-large{width:100%!important;font-size:1rem!important;padding:1rem!important}
+@media(max-width:768px){
+  *{max-width:100vw!important}
+  .hero{padding:4rem 0.5rem 2rem!important}
+  .section-title{font-size:1.75rem!important}
+  .pricing-grid,.features-grid,.steps-grid,.testimonials-grid{grid-template-columns:1fr!important}
+  .nav-links{display:none!important}
+}

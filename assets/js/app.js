@@ -1,44 +1,44 @@
 // RIPOST - App Logic (Naffy Integration)
-// Kod dostÄ™pu â†’ Limit symulacji â†’ AI Chat
+// Kod dostępu → Limit symulacji → AI Chat
 
 // ============================================
-// ðŸ“¦ PAKIETY I LIMITY
+// 📦 PAKIETY I LIMITY
 // ============================================
 const PACKAGES = {
-    // Format kodu: NAFFY-XXXX lub numer zamÃ³wienia z Naffy
-    // Rozpoznajemy pakiet po prefiksie lub dÅ‚ugoÅ›ci kodu
+    // Format kodu: NAFFY-XXXX lub numer zamówienia z Naffy
+    // Rozpoznajemy pakiet po prefiksie lub długości kodu
     
-    // Testowe kody (usuÅ„ w produkcji)
+    // Testowe kody (usuń w produkcji)
     'DEMO-2026': { type: 'start', simulations: 1, days: null },
     'PRO-49': { type: 'pro', simulations: 5, days: null },
     'UNLIMITED-99': { type: 'unlimited', simulations: 999, days: 30 },
     
     // Produkcyjne - rozpoznawanie po wzorcu
-    // Klient dostaje kod z Naffy (np. numer zamÃ³wienia)
-    // Ty okreÅ›lasz pakiet na podstawie wzorca
+    // Klient dostaje kod z Naffy (np. numer zamówienia)
+    // Ty określasz pakiet na podstawie wzorca
 };
 
-// Mapping: Naffy order ID â†’ package type
+// Mapping: Naffy order ID → package type
 function detectPackageType(code) {
-    // Testowe kody (USUÅƒ W PRODUKCJI!)
+    // Testowe kody (USUŃ W PRODUKCJI!)
     if (PACKAGES[code]) {
         return PACKAGES[code];
     }
     
-    // âœ… PRODUKCJA: Rozpoznawanie po prefiksie Naffy
+    // ✅ PRODUKCJA: Rozpoznawanie po prefiksie Naffy
     // Adrian Roszczyk - naffy.io prefiksy:
     
-    // START- â†’ 29 zÅ‚ â†’ 1 symulacja
+    // START- → 29 zł → 1 symulacja
     if (code.toUpperCase().startsWith('START-')) {
         return { type: 'start', simulations: 1, days: null };
     }
     
-    // PRO- â†’ 49 zÅ‚ â†’ 5 symulacji
+    // PRO- → 49 zł → 5 symulacji
     if (code.toUpperCase().startsWith('PRO-')) {
         return { type: 'pro', simulations: 5, days: null };
     }
     
-    // UNL- â†’ 99 zÅ‚ â†’ 7 dni nielimitowane
+    // UNL- → 99 zł → 7 dni nielimitowane
     if (code.toUpperCase().startsWith('UNL-')) {
         return { type: 'unlimited', simulations: 999, days: 30 };
     }
@@ -48,7 +48,7 @@ function detectPackageType(code) {
 }
 
 // ============================================
-// ðŸ”‘ ZARZÄ„DZANIE KODAMI
+// 🔑 ZARZĄDZANIE KODAMI
 // ============================================
 class AccessCodeManager {
     constructor() {
@@ -73,24 +73,24 @@ class AccessCodeManager {
     validateCode(code) {
         code = code.trim().toUpperCase();
         
-        // SprawdÅº czy kod juÅ¼ uÅ¼ywany
+        // Sprawdź czy kod już używany
         if (this.state.codes[code]) {
             const existing = this.state.codes[code];
             
-            // SprawdÅº limit czasu (7 dni)
+            // Sprawdź limit czasu (7 dni)
             if (existing.days) {
                 const daysPassed = (Date.now() - existing.activated) / (1000 * 60 * 60 * 24);
                 if (daysPassed > existing.days) {
-                    return { valid: false, error: 'Kod wygasÅ‚ (przekroczono 7 dni)' };
+                    return { valid: false, error: 'Kod wygasł (przekroczono 7 dni)' };
                 }
             }
             
-            // SprawdÅº limit symulacji
+            // Sprawdź limit symulacji
             if (existing.simulationsLeft <= 0) {
                 return { valid: false, error: 'Kod wyczerpany (brak symulacji)' };
             }
             
-            // Kod OK - zwrÃ³Ä‡ istniejÄ…cy stan
+            // Kod OK - zwróć istniejący stan
             return {
                 valid: true,
                 isNew: false,
@@ -102,7 +102,7 @@ class AccessCodeManager {
         const packageInfo = detectPackageType(code);
         
         if (!packageInfo) {
-            return { valid: false, error: 'NieprawidÅ‚owy kod dostÄ™pu' };
+            return { valid: false, error: 'Nieprawidłowy kod dostępu' };
         }
         
         // Aktywuj nowy kod
@@ -132,15 +132,15 @@ class AccessCodeManager {
         
         if (!access) return null;
         
-        // SprawdÅº waÅ¼noÅ›Ä‡ czasowÄ…
+        // Sprawdź ważność czasową
         if (access.days) {
             const daysPassed = (Date.now() - access.activated) / (1000 * 60 * 60 * 24);
             if (daysPassed > access.days) {
-                return null; // WygasÅ‚o
+                return null; // Wygasło
             }
         }
         
-        // SprawdÅº limit symulacji
+        // Sprawdź limit symulacji
         if (access.simulationsLeft <= 0) {
             return null; // Wyczerpane
         }
@@ -171,7 +171,7 @@ class AccessCodeManager {
 }
 
 // ============================================
-// ðŸ’¬ AI CHAT MANAGER
+// 💬 AI CHAT MANAGER
 // ============================================
 class ChatManager {
     constructor() {
@@ -184,7 +184,7 @@ class ChatManager {
         this.messages.push({ role: 'user', content: message });
         this.currentScenario = scenario;
         
-        // PokaÅ¼ loading z rotujÄ…cymi tekstami
+        // Pokaż loading z rotującymi tekstami
         this.showLoadingStates();
         
         try {
@@ -218,11 +218,11 @@ class ChatManager {
     
     showLoadingStates() {
         const loadingTexts = [
-            'ðŸ¤” PrzygotowujÄ™ trudne pytanie...',
-            'ðŸ“Š AnalizujÄ™ Twoje argumenty...',
-            'ðŸ’¡ FormuÅ‚ujÄ™ feedback...',
-            'ðŸŽ¯ Sprawdzam Twoje odpowiedzi...',
-            'ðŸ“ PrzygotowujÄ™ ocenÄ™...'
+            '🤔 Przygotowuję trudne pytanie...',
+            '📊 Analizuję Twoje argumenty...',
+            '💡 Formułuję feedback...',
+            '🎯 Sprawdzam Twoje odpowiedzi...',
+            '📝 Przygotowuję ocenę...'
         ];
         
         const loadingEl = document.getElementById('aiLoading');
@@ -261,7 +261,7 @@ class ChatManager {
 }
 
 // ============================================
-// ðŸŽ¨ UI CONTROLLER
+// 🎨 UI CONTROLLER
 // ============================================
 class AppUI {
     constructor() {
@@ -271,7 +271,7 @@ class AppUI {
     }
     
     init() {
-        // SprawdÅº czy jest aktywny dostÄ™p
+        // Sprawdź czy jest aktywny dostęp
         const access = this.accessManager.getCurrentAccess();
         
         if (access) {
@@ -301,12 +301,12 @@ class AppUI {
         if (!infoEl) return;
         
         let infoHTML = `<div class="access-badge ${access.type}">`;
-        infoHTML += `<span class="badge-icon">ðŸ”‘</span>`;
+        infoHTML += `<span class="badge-icon">🔑</span>`;
         infoHTML += `<span>Pakiet: ${access.type.toUpperCase()}</span>`;
         
         if (access.daysLeft) {
             infoHTML += `<span class="separator">|</span>`;
-            infoHTML += `<span>PozostaÅ‚o: ${access.daysLeft} dni</span>`;
+            infoHTML += `<span>Pozostało: ${access.daysLeft} dni</span>`;
         } else {
             infoHTML += `<span class="separator">|</span>`;
             infoHTML += `<span>Symulacje: ${access.simulationsLeft}</span>`;
@@ -354,7 +354,7 @@ class AppUI {
         const code = codeInput.value.trim();
         
         if (!code) {
-            this.showError('Wpisz kod dostÄ™pu');
+            this.showError('Wpisz kod dostępu');
             return;
         }
         
@@ -403,12 +403,12 @@ class AppUI {
         this.chatManager.reset();
         
         const scenarioNames = {
-            'raise': 'PodwyÅ¼ka',
+            'raise': 'Podwyżka',
             'promotion': 'Awans',
             'interview': 'Rekrutacja'
         };
         
-        // WyÅ›wietl info o scenariuszu
+        // Wyświetl info o scenariuszu
         this.addSystemMessage(`Rozpoczynasz trening: <strong>${scenarioNames[scenario]}</strong>`);
         
         // AI first message
@@ -418,7 +418,7 @@ class AppUI {
             const response = await this.chatManager.sendMessage('START', scenario);
             this.addAIMessage(response.message);
         } catch (error) {
-            this.showError('BÅ‚Ä…d poÅ‚Ä…czenia z AI. SprÃ³buj ponownie.');
+            this.showError('Błąd połączenia z AI. Spróbuj ponownie.');
         }
     }
     
@@ -440,7 +440,7 @@ class AppUI {
             
             this.addAIMessage(response.message);
             
-            // JeÅ›li jest score - pokaÅ¼ feedback
+            // Jeśli jest score - pokaż feedback
             if (response.score) {
                 this.showFeedback(response.score, response.feedback);
                 
@@ -455,7 +455,7 @@ class AppUI {
             }
             
         } catch (error) {
-            this.showError('BÅ‚Ä…d poÅ‚Ä…czenia z AI. SprÃ³buj ponownie.');
+            this.showError('Błąd połączenia z AI. Spróbuj ponownie.');
         }
     }
     
@@ -476,7 +476,7 @@ class AppUI {
             <div class="message-content">
                 <div class="message-bubble">${this.escapeHtml(text)}</div>
             </div>
-            <div class="message-avatar">ðŸ‘¤</div>
+            <div class="message-avatar">👤</div>
         `;
         messagesEl.appendChild(msgEl);
         this.scrollToBottom();
@@ -487,7 +487,7 @@ class AppUI {
         const msgEl = document.createElement('div');
         msgEl.className = 'message ai';
         msgEl.innerHTML = `
-            <div class="message-avatar">ðŸ’¼</div>
+            <div class="message-avatar">💼</div>
             <div class="message-content">
                 <div class="message-bubble">${this.escapeHtml(text)}</div>
             </div>
@@ -506,7 +506,7 @@ class AppUI {
                 
                 ${feedback.weakPoints ? `
                     <div class="feedback-section">
-                        <h4>âŒ SÅ‚abe punkty:</h4>
+                        <h4>❌ Słabe punkty:</h4>
                         <ul>
                             ${feedback.weakPoints.map(point => `<li>${this.escapeHtml(point)}</li>`).join('')}
                         </ul>
@@ -515,7 +515,7 @@ class AppUI {
                 
                 ${feedback.improvements ? `
                     <div class="feedback-section">
-                        <h4>âœ… Jak poprawiÄ‡:</h4>
+                        <h4>✅ Jak poprawić:</h4>
                         <ul>
                             ${feedback.improvements.map(point => `<li>${this.escapeHtml(point)}</li>`).join('')}
                         </ul>
@@ -541,7 +541,7 @@ class AppUI {
         document.getElementById('chatInterface').style.display = 'none';
         document.getElementById('chatMessages').innerHTML = '';
         
-        // UsuÅ„ active ze wszystkich scenariuszy
+        // Usuń active ze wszystkich scenariuszy
         document.querySelectorAll('.scenario-card').forEach(c => {
             c.classList.remove('active');
         });
@@ -550,7 +550,7 @@ class AppUI {
     }
     
     handleLogout() {
-        if (confirm('Czy na pewno chcesz siÄ™ wylogowaÄ‡?')) {
+        if (confirm('Czy na pewno chcesz się wylogować?')) {
             this.accessManager.logout();
             this.showUnlockScreen();
             this.chatManager.reset();
@@ -596,11 +596,10 @@ class AppUI {
 }
 
 // ============================================
-// ðŸš€ INITIALIZE
+// 🚀 INITIALIZE
 // ============================================
 let app;
 
 document.addEventListener('DOMContentLoaded', () => {
     app = new AppUI();
 });
-

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Ripost Demo Video Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .video-container {
+            width: 800px;
+            height: 450px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .download-btn {
+            background: #10b981;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <canvas id="demoCanvas"></canvas>
+        <div class="controls">
+            <button class="play-btn" id="playBtn">▶️</button>
+            <span style="color: white; font-size: 14px;">Ripost Demo</span>
+            <button class="download-btn" id="downloadBtn">⬇️ Pobierz</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('demoCanvas');
+        const ctx = canvas.getContext('2d');
+        const playBtn = document.getElementById('playBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        // Set canvas size
+        canvas.width = 1920;
+        canvas.height = 1080;
+        
+        let frame = 0;
+        let isPlaying = false;
+        let animationId;
+        
+        // Demo script scenes
+        const scenes = [
+            {
+                duration: 90,
+                render: (f) => {
+                    // Scene 1: Intro - Logo and title
+                    const progress = f / 90;
+                    
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Gradient orb
+                    const gradient = ctx.createRadialGradient(960, 540, 0, 960, 540, 400);
+                    gradient.addColorStop(0, `rgba(99, 102, 241, ${0.3 * progress})`);
+                    gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Logo
+                    ctx.font = 'bold 120px Arial';
+                    ctx.fillStyle = `rgba(255, 255, 255, ${progress})`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText('⚡ Ripost', 960, 500);
+                    
+                    // Subtitle
+                    ctx.font = '40px Arial';
+                    ctx.fillStyle = `rgba(160, 160, 160, ${progress})`;
+                    ctx.fillText('AI Trener Negocjacji', 960, 600);
+                }
+            },
+            {
+                duration: 120,
+                render: (f) => {
+                    // Scene 2: Problem statement
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.font = 'bold 60px Arial';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Czy kiedykolwiek bałeś się', 960, 400);
+                    ctx.fillText('prosić o podwyżkę?', 960, 480);
+                    
+                    if (f > 60) {
+                        const alpha = Math.min((f - 60) / 30, 1);
+                        ctx.font = '50px Arial';
+                        ctx.fillStyle = `rgba(239, 68, 68, ${alpha})`;
+                        ctx.fillText('😰', 960, 600);
+                    }
+                }
+            },
+            {
+                duration: 150,
+                render: (f) => {
+                    // Scene 3: Solution
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.font = 'bold 70px Arial';
+                    ctx.fillStyle = '#10b981';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Teraz możesz przećwiczyć!', 960, 450);
+                    
+                    if (f > 60) {
+                        ctx.font = '45px Arial';
+                        ctx.fillStyle = '#a0a0a0';
+                        ctx.fillText('Zanim wydarzy się na prawdę', 960, 550);
+                    }
+                }
+            },
+            {
+                duration: 180,
+                render: (f) => {
+                    // Scene 4: App interface simulation
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Phone frame
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.fillRect(660, 140, 600, 800);
+                    ctx.strokeStyle = '#6366f1';
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(660, 140, 600, 800);
+                    
+                    // Header
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.fillRect(680, 160, 560, 80);
+                    ctx.font = 'bold 40px Arial';
+                    ctx.fillStyle = '#6366f1';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('⚡ Ripost', 700, 215);
+                    
+                    // Chat messages
+                    const messages = [
+                        { user: false, text: 'Cześć! Chcę rozmawiać o podwyżce.' },
+                        { user: true, text: 'Dlaczego uważasz, że zasługujesz?' },
+                        { user: false, text: 'Zwiększyłem sprzedaż o 30%!' }
+                    ];
+                    
+                    let y = 280;
+                    messages.forEach((msg, i) => {
+                        if (f > i * 50) {
+                            const alpha = Math.min((f - i * 50) / 20, 1);
+                            
+                            if (msg.user) {
+                                ctx.fillStyle = `rgba(99, 102, 241, ${alpha})`;
+                                ctx.fillRect(900, y, 320, 70);
+                            } else {
+                                ctx.fillStyle = `rgba(40, 40, 40, ${alpha})`;
+                                ctx.fillRect(700, y, 320, 70);
+                            }
+                            
+                            ctx.font = '24px Arial';
+                            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                            ctx.textAlign = 'left';
+                            const words = msg.text.split(' ');
+                            let line = '';
+                            let lineY = y + 35;
+                            words.forEach(word => {
+                                const testLine = line + word + ' ';
+                                if (ctx.measureText(testLine).width < 280) {
+                                    line = testLine;
+                                } else {
+                                    ctx.fillText(line, (msg.user ? 920 : 720), lineY);
+                                    line = word + ' ';
+                                    lineY += 30;
+                                }
+                            });
+                            ctx.fillText(line, (msg.user ? 920 : 720), lineY);
+                            
+                            y += 100;
+                        }
+                    });
+                }
+            },
+            {
+                duration: 150,
+                render: (f) => {
+                    // Scene 5: Evaluation
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Evaluation card
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';
+                    ctx.fillRect(460, 240, 1000, 600);
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(460, 240, 1000, 600);
+                    
+                    ctx.font = 'bold 80px Arial';
+                    ctx.fillStyle = '#10b981';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('OCENA: 8/10', 960, 360);
+                    
+                    if (f > 40) {
+                        ctx.font = 'bold 40px Arial';
+                        ctx.fillStyle = '#ffffff';
+                        ctx.textAlign = 'left';
+                        ctx.fillText('✓ Świetne konkretne dane', 520, 480);
+                        ctx.fillText('✓ Dobra pewność siebie', 520, 560);
+                        ctx.fillText('⚠ Brak porównania do rynku', 520, 640);
+                    }
+                    
+                    if (f > 80) {
+                        ctx.font = '35px Arial';
+                        ctx.fillStyle = '#a0a0a0';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Dodaj więcej kontekstu i będzie 10/10!', 960, 760);
+                    }
+                }
+            },
+            {
+                duration: 120,
+                render: (f) => {
+                    // Scene 6: CTA
+                    const progress = f / 120;
+                    
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Gradient background
+                    const gradient = ctx.createRadialGradient(960, 540, 0, 960, 540, 600);
+                    gradient.addColorStop(0, `rgba(99, 102, 241, ${0.2 * progress})`);
+                    gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.font = 'bold 80px Arial';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Gotowy na trening?', 960, 450);
+                    
+                    if (f > 40) {
+                        // Button
+                        ctx.fillStyle = '#6366f1';
+                        ctx.fillRect(710, 520, 500, 90);
+                        ctx.font = 'bold 45px Arial';
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillText('Rozpocznij teraz →', 960, 580);
+                    }
+                    
+                    if (f > 70) {
+                        ctx.font = '35px Arial';
+                        ctx.fillStyle = '#a0a0a0';
+                        ctx.fillText('ripost.vercel.app', 960, 680);
+                    }
+                }
+            }
+        ];
+        
+        function animate() {
+            if (!isPlaying) return;
+            
+            let currentTime = 0;
+            let sceneIndex = 0;
+            
+            for (let i = 0; i < scenes.length; i++) {
+                if (frame < currentTime + scenes[i].duration) {
+                    sceneIndex = i;
+                    break;
+                }
+                currentTime += scenes[i].duration;
+            }
+            
+            const scene = scenes[sceneIndex];
+            const sceneFrame = frame - currentTime;
+            
+            scene.render(sceneFrame);
+            
+            frame++;
+            
+            // Loop back to start
+            if (frame >= scenes.reduce((sum, s) => sum + s.duration, 0)) {
+                frame = 0;
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.textContent = isPlaying ? '⏸️' : '▶️';
+            
+            if (isPlaying) {
+                animate();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+        
+        downloadBtn.addEventListener('click', () => {
+            // Export current frame as image
+            const link = document.createElement('a');
+            link.download = 'ripost-demo-frame.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+        
+        // Draw first frame
+        scenes[0].render(0);
+    </script>
+</body>
+</html>

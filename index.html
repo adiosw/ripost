@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Ripost - AI Trener Negocjacji | Przećwicz najtrudniejszą rozmowę</title>
+    <meta name="description" content="Przećwicz trudne rozmowy zawodowe z AI. Symuluj podwyżkę, awans, rekrutację. Otrzymaj konkretny feedback i popraw swoje umiejętności negocjacyjne.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="assets/css/premium.css">
+    <meta property="og:title" content="Ripost - AI Trener Negocjacji">
+    <meta property="og:description" content="Przećwicz najtrudniejszą rozmowę zawodową, zanim się wydarzy">
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">⚡ Ripost</div>
+                <div class="nav-links" id="navLinks">
+                    <a href="#how-it-works">Jak to działa</a>
+                    <a href="#features">Funkcje</a>
+                    <a href="#pricing">Cennik</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="app.html" class="btn-primary-small">Zaloguj się</a>
+                </div>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Przećwicz najtrudniejszą rozmowę, <span class="gradient-text">zanim się wydarzy</span></h1>
+                <p class="hero-subtitle">Symulator AI do treningu podwyżek, awansów i rozmów rekrutacyjnych. Otrzymaj konkretny feedback i zwiększ swoje szanse na sukces.</p>
+                <div class="hero-cta">
+                    <a href="#pricing" class="btn-primary">Rozpocznij trening</a>
+                    <a href="#demo" class="btn-secondary">Zobacz demo</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Użytkowników</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">+25%</div>
+                        <div class="stat-label">Średnia podwyżka</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4.9</div>
+                        <div class="stat-label">Ocena</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="section">
+        <div class="container">
+            <h2 class="section-title">Jak to działa?</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">🎯</div>
+                    <h3>Wybierz scenariusz</h3>
+                    <p>Podwyżka, awans lub rozmowa rekrutacyjna - wybierz sytuację, którą chcesz przećwiczyć</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🤖</div>
+                    <h3>AI symuluje rozmowę</h3>
+                    <p>Zaawansowane AI wciela się w rolę szefa lub rekrutera i prowadzi z Tobą realistyczną rozmowę</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">📊</div>
+                    <h3>Otrzymujesz feedback</h3>
+                    <p>Ocena 1-10, słabe punkty i konkretne wskazówki jak poprawić swoją argumentację</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Video Section -->
+    <section id="demo" class="section demo-video-section">
+        <div class="container">
+            <h2 class="section-title">Zobacz Ripost w akcji</h2>
+            <div class="video-wrapper">
+                <video id="demoVideo" controls poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%231a1a1a' width='1920' height='1080'/%3E%3Ctext x='50%25' y='50%25' font-size='120' fill='%236366f1' text-anchor='middle' dy='.3em'%3E⚡ Ripost Demo%3C/text%3E%3C/svg%3E">
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                    <!-- Fallback text -->
+                    Twoja przeglądarka nie obsługuje wideo HTML5.
+                </video>
+                <div class="video-overlay" id="videoOverlay">
+                    <button class="video-play-btn" id="videoPlayBtn">
+                        <span class="play-icon">▶</span>
+                    </button>
+                    <div class="video-description">
+                        <h3>🎬 Zobacz jak działa Ripost</h3>
+                        <p>2 minuty treningu z AI - od wyboru scenariusza do otrzymania feedbacku</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Demo Section -->
+    <section class="section demo-section">
+        <div class="container">
+            <h2 class="section-title">Przykładowa rozmowa</h2>
+            <div class="demo-container">
+                <div class="demo-chat">
+                    <div class="demo-message demo-ai">
+                        <div class="demo-avatar">🤖</div>
+                        <div class="demo-bubble">Cześć! Rozumiem, że chcesz porozmawiać o podwyżce. Co chciałbyś powiedzieć?</div>
+                    </div>
+                    <div class="demo-message demo-user">
+                        <div class="demo-bubble">Uważam, że zasługuję na podwyżkę. Pracuję tu od 2 lat.</div>
+                        <div class="demo-avatar">👤</div>
+                    </div>
+                    <div class="demo-message demo-ai">
+                        <div class="demo-avatar">🤖</div>
+                        <div class="demo-bubble">To prawda, ale sam staż to za mało. Jakie konkretne osiągnięcia możesz wymienić?</div>
+                    </div>
+                    <div class="demo-evaluation">
+                        <div class="eval-score">OCENA: 6/10</div>
+                        <div class="eval-section">
+                            <strong>SŁABE PUNKTY:</strong>
+                            <ul>
+                                <li>Brak konkretnych danych i liczb</li>
+                                <li>Zbyt ogólne argumenty</li>
+                            </ul>
+                        </div>
+                        <div class="eval-section">
+                            <strong>JAK POPRAWIĆ:</strong>
+                            <ul>
+                                <li>Użyj metody STAR z konkretnymi projektami</li>
+                                <li>Podaj wymierne rezultaty (liczby, %)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title">Dlaczego Ripost?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>3 Scenariusze</h3>
+                    <p>Podwyżka, awans, rekrutacja - wszystkie najważniejsze rozmowy zawodowe w jednym miejscu</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Zaawansowane AI</h3>
+                    <p>Groq AI z modelem Llama 3.1 70B - najbardziej realistyczne symulacje na rynku</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Ocena 1-10</h3>
+                    <p>Otrzymujesz szczegółową ocenę swojej argumentacji z podziałem na poszczególne obszary</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Konkretne porady</h3>
+                    <p>Nie tylko krytyka - dostaniesz dokładne instrukcje jak poprawić swoją rozmowę</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Działa wszędzie</h3>
+                    <p>PWA - dodaj do ekranu głównego i trenuj z telefonu, tabletu lub komputera</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Natychmiastowy start</h3>
+                    <p>Bez rejestracji, bez subskrypcji - kupujesz kod i od razu zaczynasz trening</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="section pricing-section">
+        <div class="container">
+            <h2 class="section-title">Wybierz swój pakiet</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-badge">START</div>
+                        <h3>Spróbuj</h3>
+                        <div class="pricing-price">29 <span>zł</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ 1 symulacja z AI</li>
+                        <li>✅ Wszystkie 3 scenariusze</li>
+                        <li>✅ Szczegółowy feedback</li>
+                        <li>✅ Ocena 1-10</li>
+                    </ul>
+                    <a href="https://www.naffy.io/Ripost/ripost-start" class="btn-pricing">Kup teraz</a>
+                </div>
+                
+                <div class="pricing-card pricing-popular">
+                    <div class="pricing-popular-badge">⭐ Najpopularniejszy</div>
+                    <div class="pricing-header">
+                        <div class="pricing-badge pricing-badge-pro">PRO</div>
+                        <h3>Mistrz negocjacji</h3>
+                        <div class="pricing-price">49 <span>zł</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ 5 symulacji z AI</li>
+                        <li>✅ Wszystkie 3 scenariusze</li>
+                        <li>✅ Szczegółowy feedback</li>
+                        <li>✅ Ocena 1-10</li>
+                        <li>✅ Historia rozmów</li>
+                    </ul>
+                    <a href="https://www.naffy.io/Ripost/ripost-pro" class="btn-pricing btn-pricing-pro">Kup teraz</a>
+                </div>
+                
+                <div class="pricing-card pricing-unlimited">
+                    <div class="pricing-promo-badge">🔥 Cena promocyjna</div>
+                    <div class="pricing-header">
+                        <div class="pricing-badge pricing-badge-unlimited">UNLIMITED</div>
+                        <h3>Bez limitów</h3>
+                        <div class="pricing-price-old">149 zł</div>
+                        <div class="pricing-price">99 <span>zł</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Nielimitowane symulacje</li>
+                        <li>✅ Wszystkie 3 scenariusze</li>
+                        <li>✅ Szczegółowy feedback</li>
+                        <li>✅ Ocena 1-10</li>
+                        <li>✅ Historia rozmów</li>
+                        <li>✅ Dostęp na 30 dni</li>
+                    </ul>
+                    <a href="https://www.naffy.io/Ripost/ripost-unlimited" class="btn-pricing btn-pricing-unlimited">Kup teraz</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section testimonials-section">
+        <div class="container">
+            <h2 class="section-title">Co mówią użytkownicy?</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Przećwiczyłem rozmowę o podwyżkę 3 razy z Ripost. Feedback AI pokazał mi, że używam za dużo "może" i "myślę". Po poprawkach dostałem 30% podwyżkę!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨‍💼</div>
+                        <div>
+                            <div class="testimonial-name">Michał K.</div>
+                            <div class="testimonial-role">Senior Developer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Jako introwertyku zawsze stresowałam się rozmowami rekrutacyjnymi. Ripost pomógł mi przygotować się na trudne pytania. Dostałam pracę marzeń!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩‍💻</div>
+                        <div>
+                            <div class="testimonial-name">Anna W.</div>
+                            <div class="testimonial-role">UX Designer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Trening z AI jest lepszy niż z prawdziwym człowiekiem - nie ocenia, nie krytykuje, tylko daje konkretne wskazówki. Awans w kieszeni!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨‍🔬</div>
+                        <div>
+                            <div class="testimonial-name">Piotr S.</div>
+                            <div class="testimonial-role">Team Leader</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section faq-section">
+        <div class="container">
+            <h2 class="section-title">Najczęściej zadawane pytania</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Jak działa kod dostępu?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Po zakupie pakietu otrzymujesz unikalny kod (np. PRO-49). Wpisujesz go w aplikacji i od razu możesz rozpocząć trening. Kod jest ważny bezterminowo (poza UNLIMITED - 30 dni).</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Czy muszę podawać dane osobowe?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Nie! Nie zbieramy żadnych danych osobowych. Wystarczy kod dostępu - bez rejestracji, bez emaila, bez niczego.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Jak realistyczne są symulacje?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Używamy Groq AI z modelem Llama 3.1 70B - jednego z najlepszych modeli językowych. AI reaguje jak prawdziwy szef: zadaje trudne pytania, kwestionuje argumenty, wymaga konkretów.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Co jeśli wykorzystam wszystkie symulacje?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Możesz kupić kolejny pakiet. Kody są niezależne - każdy nowy kod dodaje symulacje do Twojego konta.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Czy mogę użyć tego na telefonie?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Tak! Ripost to PWA (Progressive Web App). Działa w przeglądarce i możesz dodać do ekranu głównego jak zwykłą aplikację. Kompatybilne z iOS i Android.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Czy mogę zwrócić pakiet?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Jeśli nie aktywowałeś jeszcze kodu, możesz zwrócić pakiet w ciągu 14 dni. Po aktywacji zwrot nie jest możliwy (zgodnie z prawem o treściach cyfrowych).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="section cta-section">
+        <div class="gradient-orb orb-3"></div>
+        <div class="container">
+            <div class="cta-content">
+                <h2>Gotowy, żeby zmienić swoją karierę?</h2>
+                <p>Dołącz do 500+ profesjonalistów, którzy przećwiczyli swoje najtrudniejsze rozmowy z AI</p>
+                <a href="#pricing" class="btn-primary btn-large">Rozpocznij trening teraz</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">⚡ Ripost</div>
+                    <p>AI Trener Negocjacji</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Produkt</h4>
+                        <a href="#how-it-works">Jak to działa</a>
+                        <a href="#features">Funkcje</a>
+                        <a href="#pricing">Cennik</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Pomoc</h4>
+                        <a href="#faq">FAQ</a>
+                        <a href="mailto:kontakt@ripost.pl">Kontakt</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <a href="#">Regulamin</a>
+                        <a href="#">Polityka prywatności</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Ripost. Wszystkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/premium.js"></script>
+</body>
+</html>

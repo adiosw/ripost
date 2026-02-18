@@ -1,0 +1,9 @@
+{
+  "name": "ripost-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Ripost",
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "stripe": "^14.11.0"
+  }
+}

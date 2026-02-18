@@ -1,0 +1,9 @@
+{
+  "name": "ripost",
+  "version": "1.0.0",
+  "description": "AI Trener Negocjacji",
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "stripe": "^14.11.0"
+  }
+}

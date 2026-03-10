@@ -1,223 +1,59 @@
-// Groq API Integration for Ripost
-// Vercel Serverless Function
+/**
+ * Ripost AI – Netlify Function: /api/chat
+ * Groq API z modelem LLaMA 3.1 70B
+ */
+const GROQ_KEY = process.env.GROQ_API_KEY || process.env.GROQ_API_KEY || '';
 
-const fetch = require('node-fetch');
-
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-
-const SYSTEM_PROMPTS = {
-    raise: `Jesteś wymagającym szefem w trakcie rozmowy o podwyżkę. Twoja rola:
-- Zadawaj trudne pytania o konkretne osiągnięcia i liczby
-- Kwestionuj ogólne stwierdzenia typu "ciężko pracuję"
-- Wymagaj konkretów: projekty, metryki, wymierne rezultaty
-- Bądź sceptyczny, ale fair - jeśli argument jest dobry, to przyznaj
-- Po 2-3 wymianach daj szczegółową ocenę 1-10
-
-Gdy dajesz ocenę, użyj formatu:
-[OCENA: X/10]
-
-SŁABE PUNKTY:
-1. Pierwszy słaby punkt
-2. Drugi słaby punkt
-3. Trzeci słaby punkt
-
-JAK POPRAWIĆ:
-1. Pierwsza konkretna porada
-2. Druga konkretna porada
-3. Trzecia konkretna porada
-
-PODSUMOWANIE:
-Krótkie 2-3 zdaniowe podsumowanie całej rozmowy.`,
-
-    promotion: `Jesteś wymagającym menedżerem oceniającym kandydata na awans. Twoja rola:
-- Sprawdzaj czy kandydat ma umiejętności przywódcze
-- Pytaj o konkretne przykłady zarządzania ludźmi/projektami
-- Testuj wizję i strategiczne myślenie
-- Kwestionuj czy jest gotowy na większą odpowiedzialność
-- Po 2-3 wymianach daj szczegółową ocenę 1-10
-
-Gdy dajesz ocenę, użyj formatu:
-[OCENA: X/10]
-
-SŁABE PUNKTY:
-1. Pierwszy słaby punkt
-2. Drugi słaby punkt
-3. Trzeci słaby punkt
-
-JAK POPRAWIĆ:
-1. Pierwsza konkretna porada
-2. Druga konkretna porada
-3. Trzecia konkretna porada
-
-PODSUMOWANIE:
-Krótkie 2-3 zdaniowe podsumowanie całej rozmowy.`,
-
-    interview: `Jesteś wymagającym rekruterem prowadzącym rozmowę kwalifikacyjną. Twoja rola:
-- Zadawaj trudne pytania behawioralne (STAR method)
-- Testuj wiedzę techniczną i soft skills
-- Pytaj o słabe strony i porażki
-- Sprawdzaj kulturę pracy i dopasowanie do firmy
-- Po 2-3 wymianach daj szczegółową ocenę 1-10
-
-Gdy dajesz ocenę, użyj formatu:
-[OCENA: X/10]
-
-SŁABE PUNKTY:
-1. Pierwszy słaby punkt
-2. Drugi słaby punkt
-3. Trzeci słaby punkt
-
-JAK POPRAWIĆ:
-1. Pierwsza konkretna porada
-2. Druga konkretna porada
-3. Trzecia konkretna porada
-
-PODSUMOWANIE:
-Krótkie 2-3 zdaniowe podsumowanie całej rozmowy.`
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Content-Type': 'application/json',
 };
 
-module.exports = async (req, res) => {
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+const SYSTEM_PROMPTS = {
+  salary:    'Jesteś wymagającym dyrektorem HR w rozmowie o podwyżce. Bądź sceptyczny, zadawaj trudne pytania, nie odpuszczaj. TYLKO PO POLSKU. Odpowiedź max 3 zdania.',
+  promotion: 'Jesteś sceptycznym CEO rozmawiającym z pracownikiem o awansie. Kwestionuj gotowość i wyniki. TYLKO PO POLSKU. Max 3 zdania.',
+  recruitment: 'Jesteś doświadczonym rekruterem prowadzącym rozmowę kwalifikacyjną. Zadawaj trudne pytania STAR. TYLKO PO POLSKU. Max 3 zdania.',
+  client:    'Jesteś trudnym klientem negocjującym warunki umowy. Bądź wymagający. TYLKO PO POLSKU. Max 3 zdania.',
+};
 
-    // Handle OPTIONS request
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+module.exports = async (req, res) => { const event = {httpMethod: req.method, body: JSON.stringify(req.body)}; const _send = (s,b) => {Object.entries(CORS).forEach(([k,v])=>res.setHeader(k,v)); res.status(s).json(b)}; if(req.method==='OPTIONS'){res.status(200).end();return;} if(req.method!=='POST'){_send(405,{error:'Method not allowed'});return;} try {
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers: CORS, body: JSON.stringify({error:'Method not allowed'}) };
+
+  try {
+    const { message, conversationHistory=[], scenario='salary', messageCount=0 } = JSON.parse(event.body||'{}');
+    const isEval = messageCount >= 6;
+    const systemPrompt = isEval
+      ? 'Dokonaj oceny tej rozmowy negocjacyjnej. Odpowiedz TYLKO w formacie JSON: {"score":7,"positives":["...","..."],"improvements":["...","..."],"summary":"..."}'
+      : (SYSTEM_PROMPTS[scenario] || SYSTEM_PROMPTS.salary);
+
+    const messages = [
+      {role:'system', content: systemPrompt},
+      ...conversationHistory.slice(-8),
+      {role:'user', content: message}
+    ];
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_KEY}`},
+      body: JSON.stringify({model:'llama-3.1-70b-versatile', messages, max_tokens:300, temperature:0.8})
+    });
+
+    if (!res.ok) throw new Error(`Groq error: ${res.status}`);
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || '';
+
+    if (isEval) {
+      try {
+        const parsed = JSON.parse(text.match(/\{[\s\S]*\}/)?.[0]||text);
+        _send(200,{...parsed,isEvaluation:true}); return;
+      } catch { _send(200,{text,isEvaluation:true,score:7}); return; }
     }
-
-    // Only allow POST
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    try {
-        const { message, conversationHistory, scenario, messageCount } = req.body;
-
-        if (!message || !scenario) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        if (!GROQ_API_KEY) {
-            return res.status(500).json({ error: 'API key not configured' });
-        }
-
-        // Build messages for Groq
-        const messages = [
-            {
-                role: 'system',
-                content: SYSTEM_PROMPTS[scenario]
-            }
-        ];
-
-        // Add conversation history
-        if (conversationHistory && conversationHistory.length > 0) {
-            conversationHistory.forEach(msg => {
-                messages.push({
-                    role: msg.role,
-                    content: msg.content
-                });
-            });
-        }
-
-        // Determine if we should give evaluation (after 2-3 exchanges)
-        const shouldEvaluate = messageCount >= 2;
-
-        if (shouldEvaluate) {
-            messages.push({
-                role: 'system',
-                content: 'To już 2-3 wymiana. Teraz daj szczegółową ocenę używając dokładnie formatu z [OCENA: X/10], SŁABE PUNKTY, JAK POPRAWIĆ i PODSUMOWANIE.'
-            });
-        }
-
-        // Call Groq API
-        const groqResponse = await fetch(GROQ_API_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${GROQ_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: 'llama-3.1-70b-versatile',
-                messages: messages,
-                temperature: 0.7,
-                max_tokens: 1000,
-                top_p: 0.9
-            })
-        });
-
-        if (!groqResponse.ok) {
-            const errorText = await groqResponse.text();
-            console.error('Groq API Error:', errorText);
-            return res.status(500).json({ 
-                error: 'Groq API error',
-                details: errorText
-            });
-        }
-
-        const groqData = await groqResponse.json();
-        const aiText = groqData.choices[0].message.content;
-
-        // Parse evaluation if present
-        let score = null;
-        let weaknesses = [];
-        let improvements = [];
-        let cleanText = aiText;
-
-        if (aiText.includes('[OCENA:') || aiText.includes('OCENA:')) {
-            // Extract score
-            const scoreMatch = aiText.match(/\[?OCENA:\s*(\d+)\/10\]?/i);
-            if (scoreMatch) {
-                score = parseInt(scoreMatch[1]);
-            }
-
-            // Extract weaknesses
-            const weaknessSection = aiText.match(/SŁABE PUNKTY:\s*((?:\d+\..*?(?=\n\d+\.|JAK POPRAWIĆ:|PODSUMOWANIE:|$))+)/s);
-            if (weaknessSection) {
-                weaknesses = weaknessSection[1]
-                    .split(/\n/)
-                    .filter(line => /^\d+\./.test(line.trim()))
-                    .map(line => line.replace(/^\d+\.\s*/, '').trim())
-                    .filter(Boolean)
-                    .slice(0, 3);
-            }
-
-            // Extract improvements
-            const improvementSection = aiText.match(/JAK POPRAWIĆ:\s*((?:\d+\..*?(?=\n\d+\.|PODSUMOWANIE:|$))+)/s);
-            if (improvementSection) {
-                improvements = improvementSection[1]
-                    .split(/\n/)
-                    .filter(line => /^\d+\./.test(line.trim()))
-                    .map(line => line.replace(/^\d+\.\s*/, '').trim())
-                    .filter(Boolean)
-                    .slice(0, 3);
-            }
-
-            // Extract summary
-            const summaryMatch = aiText.match(/PODSUMOWANIE:\s*(.*?)$/s);
-            if (summaryMatch) {
-                cleanText = summaryMatch[1].trim();
-            }
-        }
-
-        return res.status(200).json({
-            text: cleanText,
-            score: score,
-            weaknesses: weaknesses,
-            improvements: improvements,
-            fullResponse: aiText,
-            scenario: scenario
-        });
-
-    } catch (error) {
-        console.error('Function Error:', error);
-        return res.status(500).json({ 
-            error: 'Internal server error',
-            message: error.message 
-        });
-    }
+    _send(200,{text}); return;
+  } catch(err) {
+    console.error(err);
+    _send(500,{text:'Przepraszam, wystąpił błąd.',error:err.message}); return;
+  }
 };

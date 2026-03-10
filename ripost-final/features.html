@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="pl" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="description" content="Jak działa Ripost. Scenariusze, live demo, historia sesji, opinie użytkowników."/>
+  <meta name="theme-color" content="#07070d"/>
+  <link rel="manifest" href="manifest.json"/>
+  <title>Funkcje – Ripost AI Career Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   RIPOST v3 — DESIGN SYSTEM
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  /* Dark theme (default) */
+  --bg:#07070d; --bg2:#0d0d1a; --bg3:#111120;
+  --surface:rgba(255,255,255,0.03);
+  --surface2:rgba(255,255,255,0.06);
+  --surface3:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.15);
+  --text:#f0f0f8; --text2:#9090b0; --text3:#5a5a7a;
+  --accent:#6c63ff; --accent2:#ff6b9d; --accent3:#00d4aa; --gold:#ffd166;
+  --grad1:linear-gradient(135deg,#6c63ff,#ff6b9d);
+  --grad2:linear-gradient(135deg,#00d4aa,#6c63ff);
+  --grad3:linear-gradient(135deg,#ff6b9d,#ffd166);
+  --grad4:linear-gradient(135deg,#ffd166,#ff6b9d);
+  --font-d:'Syne',sans-serif; --font-b:'DM Sans',sans-serif;
+  --r:16px; --r-lg:24px; --r-xl:32px;
+  --shadow:0 8px 40px rgba(108,99,255,0.15);
+  --shadow-lg:0 20px 60px rgba(108,99,255,0.25);
+  --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+[data-theme="light"] {
+  --bg:#f5f5ff; --bg2:#ebebff; --bg3:#e0e0f5;
+  --surface:rgba(0,0,0,0.03);
+  --surface2:rgba(0,0,0,0.06);
+  --surface3:rgba(0,0,0,0.09);
+  --border:rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.15);
+  --text:#0d0d1a; --text2:#4a4a6a; --text3:#8a8aaa;
+}
+
+html{scroll-behavior:smooth}
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6;transition:background var(--transition),color var(--transition)}
+::selection{background:rgba(108,99,255,0.3);color:#fff}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+/* ── UTILITY ── */
+.grad-1{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-2{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-3{background:var(--grad3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.section-label{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem;padding:0.25rem 0.75rem;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2);border-radius:100px}
+.section-label.teal{color:var(--accent3);background:rgba(0,212,170,0.08);border-color:rgba(0,212,170,0.2)}
+.section-label.pink{color:var(--accent2);background:rgba(255,107,157,0.08);border-color:rgba(255,107,157,0.2)}
+.section-label.gold{color:var(--gold);background:rgba(255,209,102,0.08);border-color:rgba(255,209,102,0.2)}
+.fade-in{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:0.1s}.d2{transition-delay:0.2s}.d3{transition-delay:0.3s}.d4{transition-delay:0.4s}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;z-index:1000;height:68px;padding:0 4%;display:flex;align-items:center;justify-content:space-between;background:rgba(7,7,13,0.6);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border);transition:all var(--transition)}
+[data-theme="light"] header{background:rgba(245,245,255,0.7)}
+header.scrolled{background:rgba(7,7,13,0.92);box-shadow:0 4px 30px rgba(0,0,0,0.4)}
+[data-theme="light"] header.scrolled{background:rgba(245,245,255,0.95)}
+
+.logo{font-family:var(--font-d);font-size:1.45rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em;text-decoration:none;flex-shrink:0}
+.logo-dot{-webkit-text-fill-color:var(--accent3);color:var(--accent3)}
+
+nav{display:flex;align-items:center;gap:1.5rem}
+nav a{font-size:0.85rem;font-weight:500;color:var(--text2);text-decoration:none;transition:color 0.2s;letter-spacing:0.01em;position:relative}
+nav a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:var(--grad1);border-radius:1px;transform:scaleX(0);transition:transform 0.25s}
+nav a:hover{color:var(--text)}
+nav a:hover::after,nav a.active::after{transform:scaleX(1)}
+nav a.active{color:var(--text)}
+
+.header-actions{display:flex;align-items:center;gap:0.75rem}
+
+/* Theme toggle */
+.theme-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.2s;color:var(--text2)}
+.theme-btn:hover{background:var(--surface3);border-color:var(--accent);color:var(--accent)}
+
+.btn-cta-sm{padding:0.5rem 1.1rem;background:var(--grad1);border-radius:100px;color:#fff;font-weight:700;font-size:0.85rem;text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(108,99,255,0.3);transition:all 0.2s;font-family:var(--font-b)}
+.btn-cta-sm:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(108,99,255,0.45)}
+
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all 0.3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:rgba(7,7,13,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:1.5rem 5% 2rem;flex-direction:column;gap:0.75rem;z-index:999}
+[data-theme="light"] .mobile-nav{background:rgba(245,245,255,0.98)}
+.mobile-nav.open{display:flex}
+.mobile-nav a{color:var(--text2);text-decoration:none;font-size:0.95rem;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.mobile-nav .nav-cta-m{margin-top:0.5rem;text-align:center;padding:0.75rem;border-radius:12px;background:var(--grad1);color:#fff;font-weight:700;border:none}
+
+@media(max-width:820px){nav{display:none}.hamburger{display:flex}}
+
+/* ── HERO ── */
+#hero{min-height:auto;display:flex;align-items:center;padding:88px 4% 48px;position:relative;overflow:hidden}
+
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 20% 40%,rgba(108,99,255,0.12),transparent 70%),radial-gradient(ellipse 50% 50% at 80% 20%,rgba(255,107,157,0.08),transparent 70%),radial-gradient(ellipse 40% 40% at 60% 80%,rgba(0,212,170,0.06),transparent 70%),var(--bg)}
+[data-theme="light"] .hero-bg{background:radial-gradient(ellipse 70% 60% at 20% 40%,rgba(108,99,255,0.06),transparent 70%),radial-gradient(ellipse 50% 50% at 80% 20%,rgba(255,107,157,0.04),transparent 70%),var(--bg)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.04) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse 90% 80% at 50% 50%,black,transparent)}
+
+/* Orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;animation:orbF 10s ease-in-out infinite}
+.o1{width:560px;height:560px;background:radial-gradient(circle,rgba(108,99,255,0.18),transparent 70%);top:-200px;left:-150px}
+.o2{width:400px;height:400px;background:radial-gradient(circle,rgba(255,107,157,0.14),transparent 70%);top:100px;right:-100px;animation-delay:-4s}
+.o3{width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,170,0.1),transparent 70%);bottom:0;left:35%;animation-delay:-7s}
+.o4{width:200px;height:200px;background:radial-gradient(circle,rgba(255,209,102,0.1),transparent 70%);bottom:150px;right:25%;animation-delay:-2s}
+@keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-18px) scale(1.04)}66%{transform:translate(-18px,12px) scale(0.97)}}
+
+/* Floating icons */
+.f-icons{position:absolute;inset:0;pointer-events:none}
+.fi{position:absolute;width:42px;height:42px;background:var(--surface2);border:1px solid var(--border2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;backdrop-filter:blur(8px);animation:fiFloat 7s ease-in-out infinite}
+.fi:nth-child(1){top:18%;left:7%;animation-delay:0s}
+.fi:nth-child(2){top:30%;right:6%;animation-delay:-2s}
+.fi:nth-child(3){top:65%;left:4%;animation-delay:-4s}
+.fi:nth-child(4){top:12%;right:18%;animation-delay:-1s}
+.fi:nth-child(5){bottom:22%;right:8%;animation-delay:-3s}
+.fi:nth-child(6){bottom:28%;left:10%;animation-delay:-5.5s}
+@keyframes fiFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+
+/* Hero layout — 50/50 like Anygen */
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:2.5rem}}
+
+.hero-left{}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;padding:0.35rem 0.875rem;background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.25);border-radius:100px;font-size:0.75rem;font-weight:600;color:var(--accent3);margin-bottom:1.25rem;letter-spacing:0.05em;text-transform:uppercase}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent3);box-shadow:0 0 8px var(--accent3);animation:pd 2s infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.hero-title{font-family:var(--font-d);font-size:clamp(2.2rem,5.5vw,4rem);font-weight:800;line-height:1.1;letter-spacing:-0.04em;margin-bottom:1.1rem}
+.hero-sub{font-size:clamp(0.95rem,1.8vw,1.1rem);color:var(--text2);line-height:1.75;font-weight:300;margin-bottom:2rem;max-width:480px}
+
+.hero-btns{display:flex;align-items:center;gap:0.875rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.btn-p{display:inline-flex;align-items:center;gap:0.5rem;padding:0.825rem 1.75rem;background:var(--grad1);border-radius:100px;color:#fff;font-family:var(--font-d);font-weight:700;font-size:0.95rem;text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(108,99,255,0.35);transition:all 0.2s;letter-spacing:0.01em}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(108,99,255,0.55)}
+.btn-s{display:inline-flex;align-items:center;gap:0.5rem;padding:0.825rem 1.75rem;border:1px solid var(--border2);border-radius:100px;color:var(--text);background:var(--surface);font-weight:500;font-size:0.95rem;text-decoration:none;cursor:pointer;transition:all 0.2s;backdrop-filter:blur(8px)}
+.btn-s:hover{background:var(--surface2);border-color:var(--accent);color:var(--text)}
+
+/* Hero quick stats */
+.hero-stats{display:flex;gap:1.5rem;flex-wrap:wrap}
+.hstat{display:flex;flex-direction:column}
+.hstat strong{font-family:var(--font-d);font-size:1.5rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.hstat:nth-child(3) strong{background:var(--grad2);-webkit-background-clip:text;background-clip:text}
+.hstat span{font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px}
+.hstat-sep{width:1px;background:var(--border2);align-self:stretch}
+
+/* Hero RIGHT — live mini chat */
+.hero-chat-wrap{position:relative}
+.hero-chat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;backdrop-filter:blur(12px);box-shadow:0 24px 80px rgba(0,0,0,0.4)}
+.hc-topbar{padding:0.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem;background:rgba(255,255,255,0.02)}
+.hc-av{width:34px;height:34px;border-radius:50%;background:var(--grad1);display:flex;align-items:center;justify-content:center;font-size:0.875rem;flex-shrink:0}
+.hc-name{font-family:var(--font-d);font-weight:700;font-size:0.85rem}
+.hc-status{font-size:0.7rem;color:var(--accent3);display:flex;align-items:center;gap:0.3rem}
+.hc-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent3);box-shadow:0 0 5px var(--accent3)}
+.hc-scenario-tag{margin-left:auto;font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.3);border-radius:100px;color:#a89dff;text-transform:uppercase;letter-spacing:0.08em}
+.hc-msgs{padding:1.1rem;min-height:220px;display:flex;flex-direction:column;gap:0.875rem}
+.hcm{display:flex;gap:0.6rem;align-items:flex-end;animation:mIn 0.4s ease-out}
+@keyframes mIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hcm.user{flex-direction:row-reverse}
+.hcm-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.75rem}
+.hcm-av.ai{background:var(--grad1)}
+.hcm-av.usr{background:rgba(0,212,170,0.15);border:1px solid rgba(0,212,170,0.25)}
+.hcm-b{max-width:82%;padding:0.625rem 0.9rem;border-radius:14px;font-size:0.82rem;line-height:1.55}
+.hcm.ai .hcm-b{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:3px;color:var(--text)}
+.hcm.user .hcm-b{background:var(--grad1);color:#fff;border-bottom-right-radius:3px}
+.hc-typing{display:flex;gap:4px;padding:0.6rem 0.875rem;background:var(--surface2);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:3px;width:fit-content}
+.hc-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:td 1.4s infinite}
+.hc-typing span:nth-child(2){animation-delay:0.2s}
+.hc-typing span:nth-child(3){animation-delay:0.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.hc-footer{padding:0.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:0.6rem}
+.hc-inp{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:0.55rem 0.9rem;color:var(--text);font-family:var(--font-b);font-size:0.8rem;outline:none;transition:border-color 0.2s}
+.hc-inp:focus{border-color:var(--accent)}
+.hc-inp::placeholder{color:var(--text3)}
+.hc-send{width:34px;height:34px;border-radius:50%;background:var(--grad1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;transition:transform 0.2s}
+.hc-send:hover{transform:scale(1.12)}
+.hc-disclaimer{text-align:center;font-size:0.7rem;color:var(--text3);padding:0 1.1rem 0.75rem}
+
+/* Floating badges on hero card */
+.hero-badge-float{position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:0.5rem 0.875rem;font-size:0.78rem;font-weight:600;display:flex;align-items:center;gap:0.4rem;box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:fbFloat 4s ease-in-out infinite;z-index:3}
+.hbf1{top:-14px;right:20px;animation-delay:0s}
+.hbf2{bottom:-14px;left:20px;animation-delay:-2s}
+.hbf3{top:40%;right:-18px;animation-delay:-1s;font-size:0.72rem}
+@keyframes fbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ── SECTIONS ── */
+section{padding:96px 4%}
+.sec-inner{max-width:1200px;margin:0 auto}
+.sec-head{margin-bottom:3.5rem}
+.sec-title{font-family:var(--font-d);font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;letter-spacing:-0.03em;line-height:1.2;margin-bottom:0.875rem}
+.sec-sub{font-size:1rem;color:var(--text2);max-width:540px;font-weight:300;line-height:1.7}
+.text-c{text-align:center}
+.text-c .sec-sub{margin:0 auto}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--text3);margin-bottom:0.75rem}
+.breadcrumb span{color:var(--text2)}
+
+/* ── HOW IT WORKS ── */
+#how{background:linear-gradient(180deg,transparent 0%,rgba(108,99,255,0.025) 50%,transparent 100%)}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+@media(max-width:768px){.steps-grid{grid-template-columns:1fr}}
+
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;position:relative;overflow:hidden;transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition)}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad1);transform:scaleX(0);transform-origin:left;transition:transform 0.4s}
+.step-card:hover{transform:translateY(-6px);border-color:var(--border2);box-shadow:var(--shadow)}
+.step-card:hover::before{transform:scaleX(1)}
+.step-card:nth-child(2)::before{background:var(--grad2)}
+.step-card:nth-child(3)::before{background:var(--grad3)}
+.step-num{font-family:var(--font-d);font-size:4.5rem;font-weight:800;line-height:1;position:absolute;top:0.5rem;right:1.25rem;opacity:0.07;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.step-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.25rem}
+.si-p{background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.2)}
+.si-t{background:rgba(0,212,170,0.12);border:1px solid rgba(0,212,170,0.2)}
+.si-g{background:rgba(255,209,102,0.12);border:1px solid rgba(255,209,102,0.2)}
+.step-card h3{font-family:var(--font-d);font-size:1.2rem;font-weight:700;margin-bottom:0.625rem;letter-spacing:-0.01em}
+.step-card p{color:var(--text2);font-size:0.875rem;line-height:1.7}
+.step-chip{display:inline-flex;align-items:center;gap:0.3rem;margin-top:1rem;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.25rem 0.625rem;border-radius:100px}
+.sc-fast{background:rgba(0,212,170,0.1);color:var(--accent3)}
+.sc-real{background:rgba(108,99,255,0.1);color:#a89dff}
+.sc-smart{background:rgba(255,209,102,0.1);color:var(--gold)}
+
+/* ── DEMO SECTION — UPGRADED ── */
+#demo{background:linear-gradient(180deg,transparent,rgba(0,212,170,0.02),transparent)}
+.demo-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:2.5rem;align-items:start}
+@media(max-width:900px){.demo-layout{grid-template-columns:1fr}}
+
+.demo-info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;margin-bottom:1.25rem}
+.demo-scenario-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.demo-scenario-icon{width:44px;height:44px;border-radius:12px;background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.25rem}
+.demo-scenario-name{font-family:var(--font-d);font-weight:700;font-size:0.95rem}
+.demo-scenario-desc{font-size:0.8rem;color:var(--text2)}
+
+.demo-checklist{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.25rem}
+.demo-check{display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;color:var(--text2)}
+.demo-check::before{content:'✓';color:var(--accent3);font-weight:700;font-size:0.75rem;width:16px;height:16px;background:rgba(0,212,170,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+.demo-btns{display:flex;flex-direction:column;gap:0.75rem}
+.demo-progress-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-top:1rem}
+.dp-title{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:0.875rem}
+.dp-item{display:flex;align-items:center;gap:0.6rem;padding:0.3rem 0;font-size:0.8rem;color:var(--text3);transition:color 0.3s}
+.dp-item.done{color:var(--text2);text-decoration:line-through;opacity:0.5}
+.dp-item.active{color:var(--text);font-weight:600}
+.dp-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:all 0.3s}
+.dp-dot.done{background:var(--accent3)}
+.dp-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pd 2s infinite}
+
+/* Chat box */
+.chat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.cb-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem;background:rgba(255,255,255,0.015)}
+.cb-av{width:36px;height:36px;border-radius:50%;background:var(--grad1);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.cb-name{font-family:var(--font-d);font-weight:700;font-size:0.875rem}
+.cb-st{font-size:0.7rem;color:var(--accent3);display:flex;align-items:center;gap:0.3rem}
+.cb-st::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent3);box-shadow:0 0 5px var(--accent3)}
+.cb-counter{margin-left:auto;font-size:0.7rem;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.2rem 0.6rem}
+.cb-msgs{padding:1.1rem;min-height:300px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:0.875rem;scroll-behavior:smooth}
+.cmsg{display:flex;gap:0.6rem;align-items:flex-end;animation:mIn 0.4s ease-out}
+.cmsg.user{flex-direction:row-reverse}
+.cmsg-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem}
+.cmsg-av.ai{background:var(--grad1)}
+.cmsg-av.usr{background:rgba(0,212,170,0.12);border:1px solid rgba(0,212,170,0.25)}
+.cmsg-b{max-width:80%;padding:0.7rem 0.95rem;border-radius:15px;font-size:0.875rem;line-height:1.6}
+.cmsg.ai .cmsg-b{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:3px}
+.cmsg.user .cmsg-b{background:var(--grad1);color:#fff;border-bottom-right-radius:3px}
+.typing-row{display:none;gap:0.6rem;align-items:flex-end}
+.typing-row.show{display:flex}
+.typing-dots{display:flex;gap:4px;padding:0.7rem 0.9rem;background:var(--surface2);border:1px solid var(--border);border-radius:15px;border-bottom-left-radius:3px}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:td 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+.cb-input-area{padding:0.875rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:0.6rem}
+.cb-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:0.6rem 1rem;color:var(--text);font-family:var(--font-b);font-size:0.875rem;outline:none;transition:border-color 0.2s}
+.cb-input:focus{border-color:var(--accent)}
+.cb-input::placeholder{color:var(--text3)}
+.cb-input:disabled{opacity:0.5;cursor:not-allowed}
+.cb-send{width:38px;height:38px;border-radius:50%;background:var(--grad1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;transition:transform 0.2s,box-shadow 0.2s}
+.cb-send:hover:not(:disabled){transform:scale(1.1);box-shadow:0 4px 16px rgba(108,99,255,0.4)}
+.cb-send:disabled{opacity:0.4;cursor:not-allowed}
+.cb-bar{text-align:center;font-size:0.7rem;color:var(--text3);padding:0 1.1rem 0.5rem}
+.cb-bar a{color:var(--accent);text-decoration:none;font-weight:600}
+
+/* Eval card inline */
+.eval-inline{background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,170,0.04));border:1px solid rgba(108,99,255,0.2);border-radius:18px;padding:1.25rem;animation:mIn 0.5s ease-out;margin-top:0.25rem}
+.ei-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem}
+.ei-title{font-family:var(--font-d);font-weight:800;font-size:0.9rem}
+.ei-score{font-family:var(--font-d);font-size:2.25rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.ei-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:1rem}
+.ei-fill{height:100%;background:var(--grad1);border-radius:2px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1)}
+.ei-row{display:flex;gap:0.4rem;font-size:0.8rem;color:var(--text2);margin-bottom:0.25rem;line-height:1.5}
+.ei-row.pos::before{content:'✓';color:var(--accent3);font-weight:700;flex-shrink:0}
+.ei-row.neg::before{content:'→';color:var(--accent2);font-weight:700;flex-shrink:0}
+.ei-btns{display:flex;gap:0.6rem;margin-top:1rem;flex-wrap:wrap}
+
+/* ── PRICING ── */
+#pricing{background:linear-gradient(180deg,transparent,rgba(255,107,157,0.025),transparent)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+@media(max-width:768px){.pricing-grid{grid-template-columns:1fr}}
+
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;position:relative;overflow:hidden;transition:transform var(--transition),box-shadow var(--transition)}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.price-card.featured{background:var(--bg2);border-color:transparent;background-clip:padding-box;outline:2px solid transparent;position:relative}
+.price-card.featured::before{content:'';position:absolute;inset:-2px;border-radius:calc(var(--r-lg) + 2px);background:var(--grad1);z-index:-1}
+.price-card.featured:hover{transform:translateY(-6px)}
+.price-pop{display:inline-flex;align-items:center;gap:0.3rem;padding:0.25rem 0.75rem;background:var(--grad1);border-radius:100px;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#fff;margin-bottom:0.875rem}
+.price-plan{font-family:var(--font-d);font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:0.4rem}
+.price-amount{display:flex;align-items:baseline;gap:0.2rem;margin-bottom:0.4rem}
+.price-amt{font-family:var(--font-d);font-size:3rem;font-weight:800;line-height:1}
+.price-cur{font-size:1.2rem;font-weight:600;color:var(--text2);margin-right:0.1rem}
+.price-per{font-size:0.85rem;color:var(--text3)}
+.price-placeholder{font-size:0.72rem;color:var(--accent3);margin-bottom:1rem;display:flex;align-items:center;gap:0.35rem;opacity:0.8}
+.price-desc{color:var(--text2);font-size:0.85rem;margin-bottom:1.5rem;line-height:1.55}
+.price-feats{list-style:none;display:flex;flex-direction:column;gap:0.625rem;margin-bottom:1.75rem}
+.price-feats li{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.85rem;color:var(--text2)}
+.pf-y{width:16px;height:16px;border-radius:50%;background:rgba(0,212,170,0.12);color:var(--accent3);display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0;margin-top:1px}
+.pf-n{width:16px;height:16px;border-radius:50%;background:var(--surface2);color:var(--text3);display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0;margin-top:1px}
+.price-btn{display:block;width:100%;text-align:center;padding:0.825rem;border-radius:100px;font-family:var(--font-d);font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none}
+.pb-outline{border:1px solid var(--border2);color:var(--text);background:transparent}
+.pb-outline:hover{border-color:var(--accent);color:var(--accent)}
+.pb-filled{background:var(--grad1);color:#fff;box-shadow:0 4px 20px rgba(108,99,255,0.3)}
+.pb-filled:hover{box-shadow:0 8px 30px rgba(108,99,255,0.5);transform:translateY(-1px)}
+
+/* ── TESTIMONIALS ── */
+#testimonials{}
+.testi-track-wrap{margin-top:3rem;position:relative;overflow:hidden}
+.testi-track{display:flex;gap:1.25rem;animation:scrollL 35s linear infinite;width:max-content}
+.testi-track:hover{animation-play-state:paused}
+@keyframes scrollL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.testi-fade{position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
+.testi-fade.l{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.testi-fade.r{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
+.t-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.625rem;width:300px;flex-shrink:0;transition:border-color var(--transition)}
+.t-card:hover{border-color:var(--border2)}
+.t-stars{color:var(--gold);font-size:0.8rem;letter-spacing:2px;margin-bottom:0.75rem}
+.t-text{font-size:0.875rem;color:var(--text2);line-height:1.7;margin-bottom:1.1rem;font-style:italic}
+.t-author{display:flex;align-items:center;gap:0.625rem}
+.t-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:0.85rem;flex-shrink:0}
+.t-name{font-family:var(--font-d);font-weight:700;font-size:0.82rem}
+.t-role{font-size:0.72rem;color:var(--text3)}
+
+/* ── FAQ ── */
+#faq{background:linear-gradient(180deg,transparent,rgba(108,99,255,0.025),transparent)}
+.faq-list{max-width:700px;margin:0 auto}
+.faq-item{border:1px solid var(--border);border-radius:var(--r);margin-bottom:0.625rem;overflow:hidden;transition:border-color var(--transition)}
+.faq-item:hover{border-color:var(--border2)}
+.faq-item.open{border-color:rgba(108,99,255,0.3)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.375rem;cursor:pointer;font-family:var(--font-d);font-weight:600;font-size:0.95rem;gap:1rem;user-select:none}
+.faq-ico{width:22px;height:22px;border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0;transition:all 0.3s;color:var(--text2)}
+.faq-item.open .faq-ico{background:var(--grad1);border-color:transparent;transform:rotate(45deg);color:#fff}
+.faq-a{display:none;padding:0 1.375rem 1.1rem;color:var(--text2);font-size:0.875rem;line-height:1.7}
+.faq-a.open{display:block}
+
+/* ── VIDEO — UPGRADED ── */
+#video-section{}
+.video-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+.vc-top{}
+.video-thumb{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;cursor:pointer;background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(0,212,170,0.06));min-height:200px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.video-thumb:hover .vt-play button{transform:scale(1.1);box-shadow:0 12px 50px rgba(108,99,255,0.7)}
+.vt-gradient{position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(108,99,255,0.2),transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(0,212,170,0.1),transparent 70%)}
+.vt-play{position:relative;display:flex;flex-direction:column;align-items:center;gap:0.75rem;z-index:1}
+.vt-play span{font-size:0.82rem;color:var(--text2);letter-spacing:0.05em}
+.video-feat-row{display:flex;gap:0.875rem;align-items:flex-start}
+.vfr-ico{width:38px;height:38px;border-radius:10px;background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;margin-top:1px}
+.video-feat-row strong{display:block;font-family:var(--font-d);font-size:0.875rem;font-weight:700;margin-bottom:0.2rem}
+.video-feat-row p{font-size:0.8rem;color:var(--text2);line-height:1.55;margin:0}
+.video-note{background:rgba(0,212,170,0.04);border:1px solid rgba(0,212,170,0.15);border-radius:10px;padding:0.75rem 1rem;font-size:0.78rem;color:var(--text3);display:flex;gap:0.5rem;line-height:1.55}
+.play-btn-big{width:72px;height:72px;border-radius:50%;background:var(--grad1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:none;cursor:pointer;box-shadow:0 8px 36px rgba(108,99,255,0.4);transition:transform 0.2s,box-shadow 0.2s;animation:playP 2.5s infinite}
+@keyframes playP{0%,100%{box-shadow:0 8px 36px rgba(108,99,255,0.4)}50%{box-shadow:0 8px 56px rgba(108,99,255,0.7)}}
+
+/* ── HISTORY / STATS ── */
+#history{background:linear-gradient(180deg,transparent,rgba(0,212,170,0.02),transparent)}
+.history-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem}
+@media(max-width:768px){.history-grid{grid-template-columns:1fr}}
+.hist-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;position:relative;overflow:hidden;transition:transform var(--transition),border-color var(--transition)}
+.hist-stat:hover{transform:translateY(-3px);border-color:var(--border2)}
+.hist-stat::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60%;height:2px;border-radius:2px 2px 0 0}
+.hist-stat:nth-child(1)::after{background:var(--grad1)}
+.hist-stat:nth-child(2)::after{background:var(--grad2)}
+.hist-stat:nth-child(3)::after{background:var(--grad3)}
+.hs-label{font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:0.5rem}
+.hs-val{font-family:var(--font-d);font-size:2.5rem;font-weight:800;line-height:1;margin-bottom:0.3rem}
+.hist-stat:nth-child(1) .hs-val{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hist-stat:nth-child(2) .hs-val{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hist-stat:nth-child(3) .hs-val{background:var(--grad3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hs-sub{font-size:0.78rem;color:var(--text3)}
+.hs-trend{display:flex;align-items:center;gap:0.3rem;font-size:0.75rem;color:var(--accent3);margin-top:0.5rem;font-weight:600}
+
+/* Mini chart */
+.mini-chart{height:48px;display:flex;align-items:flex-end;gap:3px;margin-top:0.5rem}
+.mc-bar{flex:1;background:rgba(108,99,255,0.15);border-radius:3px 3px 0 0;transition:background 0.2s;position:relative}
+.mc-bar:hover{background:rgba(108,99,255,0.35)}
+.mc-bar.today{background:var(--accent)}
+
+.history-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:1.25rem}
+.ht-head{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.ht-title{font-family:var(--font-d);font-weight:700;font-size:0.9rem}
+.clear-btn{font-size:0.75rem;color:var(--accent2);cursor:pointer;background:none;border:1px solid rgba(255,107,157,0.25);border-radius:8px;padding:0.2rem 0.6rem;font-family:var(--font-b);transition:all 0.2s}
+.clear-btn:hover{background:rgba(255,107,157,0.08)}
+.ht-table{width:100%;border-collapse:collapse}
+.ht-table th{padding:0.75rem 1.5rem;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);text-align:left;border-bottom:1px solid var(--border)}
+.ht-table td{padding:0.875rem 1.5rem;font-size:0.875rem;color:var(--text2);border-bottom:1px solid rgba(255,255,255,0.04)}
+.ht-table tr:last-child td{border-bottom:none}
+.ht-table tr:hover td{background:var(--surface2)}
+.score-pill{display:inline-flex;padding:0.15rem 0.6rem;border-radius:100px;font-size:0.72rem;font-weight:700}
+.sp-high{background:rgba(0,212,170,0.12);color:var(--accent3)}
+.sp-mid{background:rgba(108,99,255,0.12);color:#a89dff}
+.sp-low{background:rgba(255,107,157,0.12);color:var(--accent2)}
+.ht-empty{padding:2rem;text-align:center;color:var(--text3);font-size:0.875rem}
+.next-steps-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem}
+.nsc-title{font-family:var(--font-d);font-weight:700;font-size:0.9rem;margin-bottom:1rem}
+.nsc-item{display:flex;align-items:flex-start;gap:0.6rem;font-size:0.85rem;color:var(--text2);margin-bottom:0.625rem;line-height:1.5}
+.nsc-item::before{content:'→';color:var(--accent);font-weight:700;flex-shrink:0}
+
+/* ── CTA SECTION ── */
+#cta-section{padding:60px 4%}
+.cta-box{max-width:680px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:3.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(108,99,255,0.07),transparent);pointer-events:none}
+.cta-box h2{font-family:var(--font-d);font-size:clamp(1.6rem,3.5vw,2.25rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:0.75rem;position:relative}
+.cta-box p{color:var(--text2);margin-bottom:2rem;position:relative;font-size:0.95rem}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:48px 4% 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;max-width:1200px;margin:0 auto 2.5rem}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
+.fb-brand p{color:var(--text3);font-size:0.82rem;line-height:1.7;max-width:260px;margin:0.875rem 0 1.25rem}
+.fb-seo h2{font-family:var(--font-d);font-size:0.875rem;font-weight:700;color:var(--text2);margin-bottom:0.4rem}
+.fb-seo p{font-size:0.78rem;color:var(--text3);line-height:1.6}
+.fc-title{font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:0.875rem}
+.fc-links{display:flex;flex-direction:column;gap:0.5rem}
+.fc-links a{color:var(--text2);text-decoration:none;font-size:0.82rem;transition:color 0.2s}
+.fc-links a:hover{color:var(--text)}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:1.25rem;flex-wrap:wrap;gap:1rem}
+.footer-copy{font-size:0.78rem;color:var(--text3)}
+.social-links{display:flex;gap:0.625rem}
+.soc-link{width:34px;height:34px;border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--text2);text-decoration:none;font-size:0.85rem;transition:all 0.2s}
+.soc-link:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,0.08)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(7,7,13,0.88);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r-xl);padding:2.5rem;max-width:440px;width:100%;text-align:center;animation:modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(0.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-icon{font-size:2.75rem;margin-bottom:0.875rem}
+.modal h3{font-family:var(--font-d);font-size:1.4rem;font-weight:800;margin-bottom:0.625rem}
+.modal p{color:var(--text2);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem}
+.modal-form{display:flex;flex-direction:column;gap:0.875rem}
+.modal-inp{padding:0.825rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:0.95rem;outline:none;transition:border-color 0.2s}
+.modal-inp:focus{border-color:var(--accent)}
+.modal-err{color:var(--accent2);font-size:0.78rem;display:none}
+.modal-err.show{display:block}
+.modal-success{display:none;flex-direction:column;align-items:center;gap:1rem}
+.modal-success.show{display:flex}
+.modal-close{padding:0.625rem 1.5rem;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;color:var(--text);cursor:pointer;font-size:0.875rem;font-family:var(--font-b);transition:all 0.2s}
+.modal-close:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.75rem;right:1.75rem;z-index:3000;padding:0.75rem 1.25rem;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);font-size:0.875rem;display:none;align-items:center;gap:0.625rem;box-shadow:0 8px 36px rgba(0,0,0,0.4);max-width:360px}
+.toast.show{display:flex;animation:toastIn 0.35s ease-out}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── STATS SECTION ── */
+#global-stats{padding:60px 4%;background:linear-gradient(135deg,rgba(108,99,255,0.04),rgba(0,212,170,0.03))}
+.gstats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;max-width:1200px;margin:0 auto}
+@media(max-width:768px){.gstats-grid{grid-template-columns:repeat(2,1fr)}}
+.gstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem 0.875rem;text-align:center;position:relative;overflow:hidden;transition:transform var(--transition)}
+.gstat:hover{transform:translateY(-3px)}
+.gstat-icon{font-size:1.75rem;margin-bottom:0.625rem}
+.gstat-num{font-family:var(--font-d);font-size:clamp(1.4rem,4vw,2rem);font-weight:800;line-height:1;margin-bottom:0.25rem}
+.gstat:nth-child(1) .gstat-num{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gstat:nth-child(2) .gstat-num{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gstat:nth-child(3) .gstat-num{background:var(--grad3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gstat:nth-child(4) .gstat-num{background:var(--grad4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gstat-label{font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em}
+/* PAGE-SPECIFIC */
+
+.page-hero{padding:140px 4% 72px;position:relative;overflow:hidden}
+.page-hero .ph-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 25% 50%,rgba(108,99,255,.1),transparent 70%),var(--bg)}
+.page-hero .ph-inner{position:relative;max-width:1200px;margin:0 auto}
+.page-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem;padding:.25rem .75rem;background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2);border-radius:100px}
+.page-tag.pink{color:var(--accent2);background:rgba(255,107,157,.08);border-color:rgba(255,107,157,.2)}
+.page-tag.teal{color:var(--accent3);background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.2)}
+.page-tag.gold{color:var(--gold);background:rgba(255,209,102,.08);border-color:rgba(255,209,102,.2)}
+.page-title{font-family:var(--font-d);font-size:clamp(2rem,5vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-.04em;margin-bottom:1rem;max-width:700px}
+.page-sub{color:var(--text2);font-size:1.05rem;max-width:580px;line-height:1.8;font-weight:300;margin-bottom:2.5rem}
+
+
+@media(max-width:600px){.hero-badge-float{display:none}}
+@media(max-width:600px){#hero{padding:80px 4% 36px}}
+@media(max-width:600px){.gstat-num{font-size:clamp(1.2rem,6vw,1.6rem)}}
+@media(max-width:480px){.gstat{padding:1rem 0.625rem}}
+@media(max-width:480px){.gstat-icon{font-size:1.25rem;margin-bottom:0.375rem}}
+@media(max-width:480px){.gstat-label{font-size:0.6rem}}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:1.5rem}}
+@media(max-width:600px){.hbf3{display:none}}
+</style>
+</head>
+<body>
+
+<header id="site-header">
+  <a href="index.html" class="logo">Ripost<span class="logo-dot">.</span></a>
+  <nav><a href="index.html">Start</a><a href="features.html" class="active">Funkcje</a><a href="pricing.html">Cennik</a><a href="about.html">O nas</a><a href="contact.html">Kontakt</a><a href="app.html">Aplikacja</a></nav>
+  <div class="header-actions">
+    <button class="theme-btn" id="theme-btn" aria-label="Motyw">🌙</button>
+    <a href="app.html" class="btn-cta-sm">🚀 Zacznij</a>
+    <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html">Start</a><a href="features.html">Funkcje</a><a href="pricing.html">Cennik</a><a href="about.html">O nas</a><a href="contact.html">Kontakt</a><a href="app.html">Aplikacja</a>
+  <a href="app.html" class="nav-cta-m">🚀 Zacznij trening</a>
+</div>
+
+<div class="page-hero">
+  <div class="ph-bg"></div>
+  <div class="ph-inner">
+    <div class="page-tag">Funkcje</div>
+    <h1 class="page-title">Zero teorii.<br><span class="grad-1">Tylko realne dialogi.</span></h1>
+    <p class="page-sub">Ripost wciela się w wymagającego menedżera, rekrutera lub trudnego klienta. Ty ćwiczysz, popełniasz błędy w bezpiecznym środowisku i dostajesz feedback który naprawdę coś zmienia.</p>
+    <div style="display:flex;gap:.875rem;flex-wrap:wrap">
+      <a href="app.html" class="btn-p">🚀 Zacznij trening</a>
+      <a href="pricing.html" class="btn-s">💳 Cennik</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+  <div class="sec-inner">
+    <div class="sec-head text-c fade-in">
+      <div class="breadcrumb" style="justify-content:center"><span class="section-label teal">Jak to działa</span><span>·</span><span>Ripost – AI Career Coach</span></div>
+      <h2 class="sec-title">Trzy kroki do pewności<br>w <span class="grad-1">negocjacjach</span></h2>
+      <p class="sec-sub">Krótko. Konkretnie. Z poczuciem kontroli — jak w prawdziwej rozmowie.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card fade-in d1">
+        <div class="step-num">01</div>
+        <div class="step-icon si-p">🎭</div>
+        <h3>Wybierz scenariusz</h3>
+        <p>Podwyżka, awans, rekrutacja albo trudna rozmowa — Ty decydujesz o kontekście i poziomie trudności.</p>
+        <span class="step-chip sc-fast">⚡ Szybki start</span>
+      </div>
+      <div class="step-card fade-in d2">
+        <div class="step-num">02</div>
+        <div class="step-icon si-t">🤖</div>
+        <h3>Trenuj w dialogu</h3>
+        <p>AI prowadzi rozmowę jak realny menadżer/rekruter i daje natychmiastowy feedback po każdej wyminie.</p>
+        <span class="step-chip sc-real">🎯 Realistyczny AI</span>
+      </div>
+      <div class="step-card fade-in d3">
+        <div class="step-num">03</div>
+        <div class="step-icon si-g">📊</div>
+        <h3>Odbierz wynik i plan</h3>
+        <p>Zbieraj oceny, powtarzaj sesje i obserwuj postęp w historii treningów. Każda sesja uczy konkretnie.</p>
+        <span class="step-chip sc-smart">🧠 Smart feedback</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ═══ DEMO ═══ -->
+<section id="demo">
+  <div class="sec-inner">
+    <div class="demo-layout">
+      <!-- LEFT info -->
+      <div>
+        <div class="breadcrumb"><span class="section-label pink">Demo</span><span>·</span><span>Ripost – AI Career Coach</span></div>
+        <h2 class="sec-title fade-in">Przetestuj rozmowę<br>w <span class="grad-2">30 sekund</span></h2>
+        <p class="sec-sub fade-in" style="margin-bottom:1.5rem">W pełnej wersji: zapis rozmów, ocena, sugestie zdań, historia treningów i statystyki.</p>
+
+        <div class="demo-info-card fade-in">
+          <div class="demo-scenario-header">
+            <div class="demo-scenario-icon">💰</div>
+            <div>
+              <div class="demo-scenario-name">Tryb treningu</div>
+              <div class="demo-scenario-desc">Rozmowa o podwyżce</div>
+            </div>
+          </div>
+          <div class="demo-checklist">
+            <div class="demo-check">Messenger-like UI — naturalny dialog</div>
+            <div class="demo-check">AI jako realny menadżer z obiekcjami</div>
+            <div class="demo-check">Ocena po każdej sesji + wskazówki</div>
+            <div class="demo-check">Historia treningów i trend postępu</div>
+          </div>
+        </div>
+
+        <div class="demo-btns fade-in">
+          <button class="btn-p" id="demo-play-btn" onclick="toggleDemo()" style="width:100%;justify-content:center">
+            <span id="dpi">▶</span> <span id="dpl">Odtwórz demo</span>
+          </button>
+          <a href="demo.html" class="btn-s" style="justify-content:center">📺 Pełna strona demo</a>
+          <a href="app.html" class="btn-p" style="justify-content:center;background:var(--grad2)">🚀 Przejdź do aplikacji</a>
+        </div>
+
+        <div class="demo-progress-box fade-in d2">
+          <div class="dp-title">Postęp rozmowy</div>
+          <div class="dp-item done"><div class="dp-dot done"></div>Przywitanie</div>
+          <div class="dp-item" id="dp1"><div class="dp-dot" id="dd1"></div>Otwarcie tematu</div>
+          <div class="dp-item" id="dp2"><div class="dp-dot" id="dd2"></div>Argumenty i wartość</div>
+          <div class="dp-item" id="dp3"><div class="dp-dot" id="dd3"></div>Obiekcja menadżera</div>
+          <div class="dp-item" id="dp4"><div class="dp-dot" id="dd4"></div>Kontrpropozycja</div>
+          <div class="dp-item" id="dp5"><div class="dp-dot" id="dd5"></div>Zamknięcie</div>
+          <div class="dp-item" id="dp6"><div class="dp-dot" id="dd6"></div>Ocena AI 🏆</div>
+        </div>
+      </div>
+
+      <!-- RIGHT chat -->
+      <div class="fade-in d1">
+        <div class="chat-box">
+          <div class="cb-header">
+            <div class="cb-av">🤖</div>
+            <div>
+              <div class="cb-name">Ripost AI Trener – Menadżer</div>
+              <div class="cb-st">Demo mode · obserwuj lub testuj</div>
+            </div>
+            <div class="cb-counter" id="demo-ctr">0 / 7</div>
+          </div>
+          <div class="cb-msgs" id="cb-msgs">
+            <div class="cmsg ai">
+              <div class="cmsg-av ai">🤖</div>
+              <div class="cmsg-b">Kliknij <strong style="color:var(--accent)">▶ Odtwórz demo</strong> aby zobaczyć pełną rozmowę, albo wpisz wiadomość poniżej.</div>
+            </div>
+          </div>
+          <div id="typing-wrap-demo" style="padding:0 1.1rem 0.25rem;display:none">
+            <div class="typing-row show">
+              <div class="cmsg-av ai">🤖</div>
+              <div class="typing-dots"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="cb-bar">Własne wiadomości: <span id="user-left">3</span>/3 · <a href="app.html">Pełna aplikacja →</a></div>
+          <div class="cb-input-area">
+            <input class="cb-input" id="cb-input" placeholder="Napisz wiadomość..." maxlength="300"/>
+            <button class="cb-send" id="cb-send">➤</button>
+          </div>
+        </div>
+        <p style="font-size:0.7rem;color:var(--text3);text-align:center;margin-top:0.6rem">Demo jest oparte o skrypt (mock). W produkcji podłączysz prawdziwe API LLM.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ═══ VIDEO ═══ -->
+<section id="video-section">
+  <div class="sec-inner">
+    <div class="sec-head fade-in">
+      <div class="breadcrumb"><span class="section-label teal">Demo wideo</span><span>·</span><span>Ripost – AI Career Coach</span></div>
+      <h2 class="sec-title">Zobacz, jak Ripost <span class="grad-2">prowadzi rozmowę</span></h2>
+      <p class="sec-sub">Krótka prezentacja prawdziwej sesji. Podmień link na własne nagranie albo wgraj plik mp4 do folderu public/.</p>
+    </div>
+    <div class="demo-layout" style="align-items:stretch;gap:2rem">
+      <!-- Video card - left -->
+      <div class="video-card fade-in">
+        <div class="vc-top">
+          <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:0.5rem">Player</div>
+          <div style="font-family:var(--font-d);font-weight:700;font-size:1.05rem;margin-bottom:0.25rem">Demo prezentacja działania AI</div>
+          <div style="font-size:0.78rem;color:var(--text3)">Kliknij, aby otworzyć modal z osadzonym wideo. Domyślnie jest placeholder.</div>
+        </div>
+        <div class="video-thumb" id="video-ph" onclick="playVideoDemo()">
+          <div class="vt-gradient"></div>
+          <div class="vt-play">
+            <button class="play-btn-big" aria-label="Odtwórz demo">▶</button>
+            <span>Odtwórz demo</span>
+          </div>
+          <iframe id="demo-iframe" style="display:none;position:absolute;inset:0;width:100%;height:100%;border:none;border-radius:12px" title="Ripost Demo" allowfullscreen allow="autoplay"></iframe>
+        </div>
+      </div>
+      <!-- What you'll see - right -->
+      <div class="fade-in d1" style="display:flex;flex-direction:column;justify-content:center">
+        <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem">Co zobaczysz</p>
+        <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem">
+          <div class="video-feat-row"><div class="vfr-ico">🎭</div><div><strong>Start scenariusza rozmowy</strong><p>Wybór tematu, poziomu trudności i roli rozmówcy (menadżer / rekruter / partner).</p></div></div>
+          <div class="video-feat-row"><div class="vfr-ico">🤖</div><div><strong>Styl komunikacji AI</strong><p>Realistyczne obiekcje, cisza taktyczna, kontrpropozycje — jak w prawdziwej rozmowie.</p></div></div>
+          <div class="video-feat-row"><div class="vfr-ico">📊</div><div><strong>Feedback i rekomendacje</strong><p>Ocena 0–10 z listą mocnych stron i konkretnych rzeczy do poprawy na następną sesję.</p></div></div>
+        </div>
+        <div class="video-note">
+          <span style="color:var(--accent3)">ℹ</span>
+          Wersja produkcyjna: możesz podpiąć własny plik mp4 lub platformę wideo + analitykę zdarzeń.
+        </div>
+        <a href="demo.html" class="btn-p" style="margin-top:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;width:fit-content">▶ Otwórz pełne demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ═══ HISTORY ═══ -->
+<section id="history">
+  <div class="sec-inner">
+    <div class="sec-head fade-in">
+      <div class="breadcrumb"><span class="section-label">Historia</span></div>
+      <h2 class="sec-title">Historia treningów <span class="grad-1">i statystyki</span></h2>
+      <p class="sec-sub">W tej wersji dane są lokalne (localStorage). Po podpięciu backendu możesz przenieść je do kont użytkowników.</p>
+    </div>
+
+    <div class="history-grid">
+      <div class="hist-stat fade-in d1">
+        <div class="hs-label">Sesje (łącznie)</div>
+        <div class="hs-val" id="hist-sessions">0</div>
+        <div class="hs-sub">Nabijane po ukończeniu demo.</div>
+        <div class="hs-trend" id="hist-trend" style="display:none">📈 +<span id="trend-n">0</span> w tym tygodniu</div>
+      </div>
+      <div class="hist-stat fade-in d2">
+        <div class="hs-label">Średnia ocena</div>
+        <div class="hs-val" id="hist-avg">—</div>
+        <div class="hs-sub" id="hist-avg-sub">W demo rating jest opcjonalny (placeholder).</div>
+      </div>
+      <div class="hist-stat fade-in d3">
+        <div class="hs-label">Streak 🔥</div>
+        <div class="hs-val" id="hist-streak">0</div>
+        <div class="hs-sub" id="hist-streak-sub">Dni z rzędu z sesją treningową.</div>
+        <div class="mini-chart" id="mini-chart" style="margin-top:0.75rem">
+          <div class="mc-bar" style="height:20%" title="14.02"></div>
+          <div class="mc-bar" style="height:35%" title="15.02"></div>
+          <div class="mc-bar" style="height:55%" title="16.02"></div>
+          <div class="mc-bar" style="height:40%" title="17.02"></div>
+          <div class="mc-bar" style="height:70%" title="18.02"></div>
+          <div class="mc-bar" style="height:60%" title="19.02"></div>
+          <div class="mc-bar today" style="height:80%" title="Dziś"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3);margin-top:4px">
+          <span>14.02</span><span>15.02</span><span>16.02</span><span>17.02</span><span>18.02</span><span>19.02</span><span>Dziś</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+      <div class="history-table-wrap fade-in">
+        <div class="ht-head">
+          <span class="ht-title">Ostatnie sesje — Historia</span>
+          <button class="clear-btn" onclick="clearHistory()">Wyczyść</button>
+        </div>
+        <table class="ht-table" id="hist-table">
+          <thead><tr><th>Scenariusz</th><th>Data</th></tr></thead>
+          <tbody id="hist-tbody">
+            <tr><td colspan="2" class="ht-empty">Brak sesji — uruchom demo czatu, aby pojawiły się wpisy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="next-steps-card fade-in d1">
+        <div class="nsc-title">Po podpięciu backendu</div>
+        <div class="nsc-item">logowanie użytkownika</div>
+        <div class="nsc-item">zapisy sesji w bazie (np. Supabase)</div>
+        <div class="nsc-item">oceny i feedback per sesja</div>
+        <div class="nsc-item">cele tygodniowe + streak</div>
+        <div class="nsc-item">panel admin (leady, konwersje)</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ═══ TESTIMONIALS ═══ -->
+<section id="testimonials">
+  <div class="sec-inner">
+    <div class="sec-head text-c fade-in">
+      <span class="section-label">Opinie</span>
+      <h2 class="sec-title">Ludzie lubią trening,<br>który daje <span class="grad-1">wynik</span></h2>
+      <p class="sec-sub">Krótko: więcej pewności, lepsze argumenty, mniej stresu.</p>
+    </div>
+  </div>
+  <div class="testi-track-wrap fade-in">
+    <div class="testi-fade l"></div>
+    <div class="testi-fade r"></div>
+    <div class="testi-track" id="testi-track">
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Pierwszy raz poszłam na rozmowę o podwyżkę z konkretnym skryptem. Ripost wyłapał moje słabe punkty w 10 minut."</p><div class="t-author"><div class="t-av" style="background:rgba(108,99,255,0.2);color:#a89dff">K</div><div><div class="t-name">Kasia, Product Manager</div><div class="t-role">IT/SaaS</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Największy game-changer: realistyczne kontrargumenty. Trening przypomina prawdziwą rozmowę, a nie checklistę."</p><div class="t-author"><div class="t-av" style="background:rgba(0,212,170,0.2);color:var(--accent3)">M</div><div><div class="t-name">Michał, Sales</div><div class="t-role">B2B Sales</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Dostałam +30% po 5 sesjach. Wcześniej bałam się w ogóle zacząć ten temat. Teraz rozmawiam pewnie."</p><div class="t-author"><div class="t-av" style="background:rgba(255,107,157,0.2);color:var(--accent2)">A</div><div><div class="t-name">Anna, UX Designer</div><div class="t-role">Design Agency</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"ROI w 1 miesiąc. Zapłaciłem 49 zł, dostałem podwyżkę o 800 zł/mies. Lepsza inwestycja niż kurs."</p><div class="t-author"><div class="t-av" style="background:rgba(255,209,102,0.2);color:var(--gold)">R</div><div><div class="t-name">Rafał, Senior Dev</div><div class="t-role">Fintech</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★☆</div><p class="t-text">"AI jest zaskakująco wymagający. Nie odpuszcza łatwo, co sprawia że naprawdę musisz myśleć."</p><div class="t-author"><div class="t-av" style="background:rgba(108,99,255,0.2);color:#a89dff">P</div><div><div class="t-name">Piotr, Architekt IT</div><div class="t-role">Consulting</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Przetrenowałam negocjację oferty pracy 8 razy. W końcu wynegocjowałam 4k więcej niż pierwsza propozycja."</p><div class="t-author"><div class="t-av" style="background:rgba(0,212,170,0.2);color:var(--accent3)">E</div><div><div class="t-name">Ewa, Marketing Lead</div><div class="t-role">E-commerce</div></div></div></div>
+      <!-- duplicates for infinite -->
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Pierwszy raz poszłam na rozmowę o podwyżkę z konkretnym skryptem. Ripost wyłapał moje słabe punkty w 10 minut."</p><div class="t-author"><div class="t-av" style="background:rgba(108,99,255,0.2);color:#a89dff">K</div><div><div class="t-name">Kasia, Product Manager</div><div class="t-role">IT/SaaS</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Największy game-changer: realistyczne kontrargumenty. Trening przypomina prawdziwą rozmowę, a nie checklistę."</p><div class="t-author"><div class="t-av" style="background:rgba(0,212,170,0.2);color:var(--accent3)">M</div><div><div class="t-name">Michał, Sales</div><div class="t-role">B2B Sales</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Dostałam +30% po 5 sesjach. Wcześniej bałam się w ogóle zacząć ten temat. Teraz rozmawiam pewnie."</p><div class="t-author"><div class="t-av" style="background:rgba(255,107,157,0.2);color:var(--accent2)">A</div><div><div class="t-name">Anna, UX Designer</div><div class="t-role">Design Agency</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"ROI w 1 miesiąc. Zapłaciłem 49 zł, dostałem podwyżkę o 800 zł/mies. Lepsza inwestycja niż kurs."</p><div class="t-author"><div class="t-av" style="background:rgba(255,209,102,0.2);color:var(--gold)">R</div><div><div class="t-name">Rafał, Senior Dev</div><div class="t-role">Fintech</div></div></div></div>
+      <div class="t-card"><div class="t-stars">★★★★★</div><p class="t-text">"Przetrenowałam negocjację oferty pracy 8 razy. W końcu wynegocjowałam 4k więcej niż pierwsza propozycja."</p><div class="t-author"><div class="t-av" style="background:rgba(0,212,170,0.2);color:var(--accent3)">E</div><div><div class="t-name">Ewa, Marketing Lead</div><div class="t-role">E-commerce</div></div></div></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ FAQ ═══ -->
+<section id="faq">
+  <div class="sec-inner">
+    <div class="sec-head text-c fade-in">
+      <div class="breadcrumb" style="justify-content:center"><span class="section-label">FAQ</span><span>·</span><span>Ripost – AI Career Coach</span></div>
+      <h2 class="sec-title">Pytania, które padają <span class="grad-2">najczęściej</span></h2>
+    </div>
+    <div class="faq-list fade-in">
+      <div class="faq-item open">
+        <div class="faq-q">Czy to jest prawdziwe AI?<div class="faq-ico">+</div></div>
+        <div class="faq-a open">Tak — demo korzysta z mock skryptu dla szybkości, ale pełna wersja podpina się do Groq (LLaMA 3.1) lub OpenAI GPT-4o. AI reaguje dynamicznie na Twoje odpowiedzi, nie odgrywa z góry napisanego skryptu.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Czy mogę używać na telefonie?<div class="faq-ico">+</div></div>
+        <div class="faq-a">Tak, Ripost jest zaprojektowany mobile-first. Możesz też dodać go do ekranu głównego (PWA) — działa jak natywna aplikacja bez App Store.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Jak działa płatność?<div class="faq-ico">+</div></div>
+        <div class="faq-a">Płatność przez Stripe — bezpieczna, jednorazowa subskrypcja miesięczna. Możesz anulować w każdej chwili z konta. Brak ukrytych opłat i umów.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Czy po demo dostanę email?<div class="faq-ico">+</div></div>
+        <div class="faq-a">Tak — po wpisaniu adresu email w formularzu demo wysyłamy informacje o pełnym dostępie z porównaniem planów i linkiem do zakupu. Możesz się wypisać w każdej chwili.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Ile czasu zajmuje jedna sesja?<div class="faq-ico">+</div></div>
+        <div class="faq-a">Standardowa sesja trwa 5–15 minut. Możesz ćwiczyć w przerwie, w metrze, przed snem. Każda sesja kończy się oceną i konkretnymi wskazówkami co poprawić.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Czy Ripost oferuje plany dla firm?<div class="faq-ico">+</div></div>
+        <div class="faq-a">Tak — plan UNLIMITED zawiera dostęp API dla firm. Skontaktuj się przez <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ea88d888aa98839a85999ec48b83">[email&#160;protected]</a> po wycenę dla zespołów 10+ osób z dedykowanym onboardingiem.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta-section">
+  <div class="cta-box fade-in">
+    <span class="section-label" style="margin-bottom:1.1rem">Zacznij teraz</span>
+    <h2>Zacznij trening<br><span class="grad-1">już dziś</span></h2>
+    <p>Demo dostępne od razu bez rejestracji. Pełne sesje z oceną w pakietach od 29 zł.</p>
+    <div style="display:flex;gap:.875rem;justify-content:center;flex-wrap:wrap;position:relative">
+      <a href="app.html" class="btn-p">🚀 Zacznij</a>
+      <a href="pricing.html" class="btn-s">💳 Pakiety</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="fb-brand">
+      <a href="index.html" class="logo" style="display:inline-block;margin-bottom:.875rem;font-size:1.3rem">Ripost<span class="logo-dot">.</span></a>
+      <p>Inteligentny trener AI do negocjacji zawodowych. Ćwicz, ucz się i osiągaj lepsze wyniki.</p>
+    </div>
+    <div><div class="fc-title">Produkt</div><div class="fc-links">
+      <a href="features.html">Funkcje</a><a href="demo.html">Demo AI</a>
+      <a href="app.html">Aplikacja</a><a href="blog.html">Blog</a>
+    </div></div>
+    <div><div class="fc-title">Firma</div><div class="fc-links">
+      <a href="about.html">O nas</a><a href="pricing.html">Cennik</a>
+      <a href="contact.html">Kontakt</a>
+    </div></div>
+    <div><div class="fc-title">Prawne</div><div class="fc-links">
+      <a href="#">Regulamin</a><a href="#">Prywatność</a>
+    </div></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Ripost. Wszelkie prawa zastrzeżone.</p>
+    <div class="social-links">
+      <a href="#" class="soc-link">in</a>
+      <a href="#" class="soc-link">𝕏</a>
+      <a href="#" class="soc-link">◎</a>
+    </div>
+  </div>
+</footer>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div id="modal-form-wrap">
+      <div class="modal-icon">🎯</div>
+      <h3>Koniec wersji demo</h3>
+      <p>Podaj email, wyślemy info o pełnym dostępie.</p>
+      <form class="modal-form" onsubmit="handleLead(event)">
+        <input class="modal-inp" type="email" id="lead-email" placeholder="twoj@email.com" required/>
+        <span class="modal-err" id="modal-err">Podaj prawidłowy email.</span>
+        <button type="submit" class="btn-p" style="justify-content:center">Odbierz dostęp →</button>
+      </form>
+    </div>
+    <div class="modal-success" id="modal-success">
+      <div style="font-size:3rem">✅</div>
+      <h3>Dziękujemy!</h3>
+      <p>Sprawdź skrzynkę email.</p>
+      <button class="modal-close" onclick="closeModal()">Zamknij</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><span id="t-ico">✅</span><span id="t-msg"></span></div>
+<script>
+
+const _h=document.documentElement,_tb=document.getElementById('theme-btn');
+let _dk=localStorage.getItem('ripost-theme')!=='light';
+function _at(){_h.setAttribute('data-theme',_dk?'dark':'light');_tb.textContent=_dk?'🌙':'☀️';localStorage.setItem('ripost-theme',_dk?'dark':'light')}
+_at();_tb.addEventListener('click',()=>{_dk=!_dk;_at()});
+window.addEventListener('scroll',()=>document.getElementById('site-header').classList.toggle('scrolled',scrollY>40));
+const _hm=document.getElementById('ham'),_mn=document.getElementById('mobile-nav');
+_hm.addEventListener('click',()=>{_hm.classList.toggle('open');_mn.classList.toggle('open')});
+_mn.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{_hm.classList.remove('open');_mn.classList.remove('open')}));
+const _fo=new IntersectionObserver(ee=>{ee.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>_fo.observe(el));
+let _tt;function showToast(i,m){const t=document.getElementById('toast');if(!t)return;document.getElementById('t-ico').textContent=i;document.getElementById('t-msg').textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),4500)}
+function isEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function handleLead(e){e.preventDefault();const em=document.getElementById('lead-email').value.trim();if(!isEmail(em)){document.getElementById('modal-err').classList.add('show');return}document.getElementById('modal-err').classList.remove('show');document.getElementById('modal-form-wrap').style.display='none';document.getElementById('modal-success').classList.add('show');showToast('✅','Zapisano!')}
+function closeModal(){const o=document.getElementById('modal-overlay');if(o)o.classList.remove('show')}
+const _mo=document.getElementById('modal-overlay');if(_mo)_mo.addEventListener('click',function(e){if(e.target===this)closeModal()});
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+/* FAQ */
+document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const it=q.parentElement,an=it.querySelector('.faq-a'),op=it.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').classList.remove('open')});if(!op){it.classList.add('open');an.classList.add('open')}})});
+/* HISTORY */
+function saveSession(d){try{const s=JSON.parse(localStorage.getItem('ripost_sessions')||'[]');s.unshift({...d,date:new Date().toISOString()});localStorage.setItem('ripost_sessions',JSON.stringify(s.slice(0,50)));renderHistory()}catch(e){}}
+function renderHistory(){try{const s=JSON.parse(localStorage.getItem('ripost_sessions')||'[]');const se=document.getElementById('hist-sessions'),ae=document.getElementById('hist-avg'),stre=document.getElementById('hist-streak');if(se)se.textContent=s.length;const scores=s.filter(x=>x.score).map(x=>x.score);if(ae&&scores.length)ae.textContent=(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1)+'/10';const dates=[...new Set(s.map(x=>new Date(x.date).toDateString()))];let streak=0,c=new Date();for(let i=0;i<30;i++){if(dates.includes(c.toDateString())){streak++;c.setDate(c.getDate()-1)}else break}if(stre)stre.textContent=streak;const tb=document.getElementById('hist-tbody');if(!tb)return;if(!s.length){tb.innerHTML='<tr><td colspan="3" class="ht-empty">Brak sesji — uruchom demo poniżej!</td></tr>';return}tb.innerHTML=s.slice(0,8).map(x=>{const sc=x.score?`<span class="score-pill ${x.score>=8?'sp-high':x.score>=6?'sp-mid':'sp-low'}">${x.score}/10</span>`:'–';const dt=new Date(x.date).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});return`<tr><td>${x.scenario||'Demo'}</td><td>${sc}</td><td>${dt}</td></tr>`}).join('')}catch(e){}}
+function clearHistory(){if(confirm('Usunąć całą historię sesji?')){localStorage.removeItem('ripost_sessions');renderHistory();showToast('🗑️','Historia wyczyszczona.')}}
+renderHistory();
+/* DEMO */
+const DEMO=[
+  {t:'ai',txt:'Dzień dobry! Rozumiem, że chciałeś ze mną porozmawiać. O czym chodzi?'},
+  {t:'user',txt:'Chciałbym porozmawiać o podwyżce. Pracuję tu 2 lata i uważam, że moje wynagrodzenie nie odzwierciedla wkładu.'},
+  {t:'ai',txt:'Rozumiem. Zanim przejdziemy dalej — powiedz mi konkretnie: jakie projekty realizowałeś i jakie wyniki przyniosły firmie?'},
+  {t:'user',txt:'Zaprojektowałem system obsługujący 40% transakcji, skróciłem wdrożenia o 35% i zredukowałem bug rate o 60%. Wartość projektów to ok. 2,4 mln zł.'},
+  {t:'ai',txt:'Budżet na podwyżki jest napięty. Cały zespół pracuje ciężko. Dlaczego właśnie Ty zasługujesz bardziej niż inni?'},
+  {t:'user',txt:'Proponuję etapową podwyżkę: 15% teraz i 10% za pół roku, powiązaną z KPI. Senior dev w Warszawie zarabia 18–22k. Jestem poniżej mediany.'},
+  {t:'ai',txt:'Przygotowałeś się bardzo dobrze. Etapowa propozycja z KPI jest rozsądna. Daj mi 3 dni na konsultację z HR.',eval:true},
+];
+let ds=0,dp=false,dt=null,dap=false,ml=3;
+function toggleDemo(){
+  if(!dp){dp=true;document.getElementById('demo-play-btn').style.background='linear-gradient(135deg,#ff6b9d,#ffd166)';document.getElementById('dpi').textContent='⏸';document.getElementById('dpl').textContent='Wstrzymaj';if(ds===0)document.getElementById('cb-msgs').innerHTML='';playDs()}
+  else{dp=false;clearTimeout(dt);document.getElementById('demo-play-btn').style.background='';document.getElementById('dpi').textContent='▶';document.getElementById('dpl').textContent='Wznów demo'}
+}
+async function playDs(){
+  if(ds>=DEMO.length){dp=false;document.getElementById('demo-play-btn').style.background='linear-gradient(135deg,#00d4aa,#6c63ff)';document.getElementById('dpi').textContent='✓';document.getElementById('dpl').textContent='Demo zakończone';updDp(7);setTimeout(showEval,800);return}
+  const s=DEMO[ds];updDp(ds);document.getElementById('demo-ctr').textContent=`${ds+1} / 7`;
+  if(s.t==='ai')await addAI(s.txt);else addUser(s.txt);ds++;if(dp)dt=setTimeout(playDs,s.t==='ai'?2300:1700)
+}
+function addAI(txt){const m=document.getElementById('cb-msgs'),tw=document.getElementById('typing-wrap-demo');tw.style.display='block';m.scrollTop=m.scrollHeight;return new Promise(r=>setTimeout(()=>{tw.style.display='none';const d=document.createElement('div');d.className='cmsg ai';d.innerHTML=`<div class="cmsg-av ai">🤖</div><div class="cmsg-b">${txt}</div>`;m.appendChild(d);m.scrollTop=m.scrollHeight;r()},1100))}
+function addUser(txt){const m=document.getElementById('cb-msgs'),d=document.createElement('div');d.className='cmsg user';d.innerHTML=`<div class="cmsg-b">${txt}</div><div class="cmsg-av usr">👤</div>`;m.appendChild(d);m.scrollTop=m.scrollHeight}
+function updDp(n){['dp1','dp2','dp3','dp4','dp5','dp6'].forEach((id,i)=>{const el=document.getElementById(id),dot=document.getElementById('dd'+(i+1));if(!el)return;if(i<n-1){el.className='dp-item done';if(dot)dot.className='dp-dot done'}else if(i===n-1){el.className='dp-item active';if(dot)dot.className='dp-dot active'}else{el.className='dp-item';if(dot)dot.className='dp-dot'}})}
+function showEval(){const m=document.getElementById('cb-msgs'),c=document.createElement('div');c.className='eval-inline';c.innerHTML=`<div class="ei-top"><div class="ei-title">🏆 Ocena sesji</div><div class="ei-score">8<span style="font-size:1rem;color:var(--text3)">/10</span></div></div><div class="ei-bar"><div class="ei-fill" id="eif" style="width:0%"></div></div><div class="ei-row pos">Doskonałe dane liczbowe i badanie rynku</div><div class="ei-row pos">Etapowa propozycja z KPI — bardzo profesjonalne</div><div class="ei-row neg">Zbyt szybko zaakceptowałeś — ćwicz "silent pause"</div><div class="ei-row neg">Brak BATNA — przygotuj plan alternatywny</div><div class="ei-btns"><a href="app.html" class="btn-p" style="font-size:.82rem;padding:.55rem 1.1rem">🚀 Ćwicz pełną wersję</a></div>`;m.appendChild(c);m.scrollTop=m.scrollHeight;saveSession({scenario:'Podwyżka (demo)',score:8});setTimeout(()=>{const ef=document.getElementById('eif');if(ef)ef.style.width='80%'},200)}
+const cbInp=document.getElementById('cb-input'),cbSnd=document.getElementById('cb-send');
+const MRESP=['Interesujące. Jakie konkretne wyniki masz na myśli? Liczby mnie przekonają.','Budżet jest napięty w tym kwartale. Co sprawia, że właśnie teraz?','Widzę zaangażowanie. Jaką konkretną kwotę masz na myśli?'];
+function sendManual(){const txt=cbInp?cbInp.value.trim():'';if(!txt||ml<=0)return;if(dp){showToast('⏸','Wstrzymaj demo żeby pisać.');return}
+  const m=document.getElementById('cb-msgs'),d=document.createElement('div');d.className='cmsg user';d.innerHTML=`<div class="cmsg-b">${esc(txt)}</div><div class="cmsg-av usr">👤</div>`;m.appendChild(d);cbInp.value='';ml--;const cl=document.getElementById('user-left');if(cl)cl.textContent=ml;if(ml<=0&&cbInp){cbInp.disabled=true;if(cbSnd)cbSnd.disabled=true}
+  const tw=document.getElementById('typing-wrap-demo');tw.style.display='block';m.scrollTop=m.scrollHeight;
+  const ri=Math.max(0,3-ml-1);setTimeout(()=>{tw.style.display='none';const ai=document.createElement('div');ai.className='cmsg ai';ai.innerHTML=`<div class="cmsg-av ai">🤖</div><div class="cmsg-b">${MRESP[ri]||'Dobrze!'}</div>`;m.appendChild(ai);m.scrollTop=m.scrollHeight;if(ml<=0)setTimeout(()=>{const mo=document.getElementById('modal-overlay');if(mo)mo.classList.add('show')},1200)},1200)}
+if(cbSnd)cbSnd.addEventListener('click',sendManual);
+if(cbInp)cbInp.addEventListener('keydown',e=>{if(e.key==='Enter')sendManual()});
+const demoSec=document.getElementById('demo');
+if(demoSec){const ao=new IntersectionObserver(ee=>{ee.forEach(e=>{if(e.isIntersecting&&!dap&&ds===0){dap=true;setTimeout(()=>{if(!dp)toggleDemo()},1400)}})}  ,{threshold:0.35});ao.observe(demoSec)}
+function playVideoDemo(){const iframe=document.getElementById('demo-iframe'),vg=document.querySelector('#video-section .vt-gradient'),vp=document.querySelector('#video-section .vt-play');iframe.src='https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0';iframe.style.display='block';if(vg)vg.style.display='none';if(vp)vp.style.display='none'}
+</script>
+</body>
+</html>

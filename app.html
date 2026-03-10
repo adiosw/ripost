@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl" data-theme="dark">
 <head>
-<script src="/_init.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="Ripost AI Trainer – trenuj negocjacje z AI. Podwyżka, awans, rekrutacja."/>
@@ -295,13 +294,13 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow:h
 // ╔══════════════════════════════════════════╗
 // ║  RIPOST — KONFIGURACJA (gotowa do użycia) ║
 // ╚══════════════════════════════════════════╝
-const SUPABASE_URL  = window.SUPABASE_URL;
-const SUPABASE_ANON = window.SUPABASE_ANON;
-const GROQ_KEY      = '';
-const STRIPE_PK          = window.STRIPE_PK;
-const PRICE_STARTER_ID   = window.PRICE_29;
-const PRICE_PRO_ID       = window.PRICE_49;
-const PRICE_UNLIMITED_ID = window.PRICE_99;
+const SUPABASE_URL  = 'https://dvatpruwsooftvhlpoqq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2YXRwcnV3c29vZnR2aGxwb3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTg2ODEsImV4cCI6MjA4ODQ5NDY4MX0.TLd_x6zPADLbUxMdLlQIioAfiQdo86lrpLAnNKYKXbc';
+const GROQ_KEY      = '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';
+const STRIPE_PK          = 'pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS';
+const PRICE_STARTER_ID   = 'price_1SwYi5QMrFDKS2ZZrdiQHJfo';
+const PRICE_PRO_ID       = 'price_1SwYjtQMrFDKS2ZZ1pOGZGmy';
+const PRICE_UNLIMITED_ID = 'price_1SwYkbQMrFDKS2ZZVbDBUurw';
 
 // Init Supabase
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -335,7 +334,7 @@ async function callGroqAI(messages, scenario) {
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer GROQ_KEY_PLACEHOLDER'},
+      headers:{'Content-Type':'application/json','Authorization':'Bearer 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'},
       body: JSON.stringify({
         model:'llama-3.1-70b-versatile',
         messages:[{role:'system',content:PROMPTS[scenario]||PROMPTS.salary},...messages],

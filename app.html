@@ -1,97 +1,845 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Ripost - Aplikacja</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="assets/css/premium.css">
+<script src="/_init.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Ripost AI Trainer – trenuj negocjacje z AI. Podwyżka, awans, rekrutacja."/>
+  <meta name="theme-color" content="#07070d"/>
+  <link rel="manifest" href="manifest.json"/>
+  <title>AI Trainer – Ripost Career Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070d;--bg2:#0d0d1a;
+  --surface:rgba(255,255,255,0.03);--surface2:rgba(255,255,255,0.06);--surface3:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --text:#f0f0f8;--text2:#9090b0;--text3:#5a5a7a;
+  --accent:#6c63ff;--accent2:#ff6b9d;--accent3:#00d4aa;--gold:#ffd166;
+  --grad1:linear-gradient(135deg,#6c63ff,#ff6b9d);
+  --grad2:linear-gradient(135deg,#00d4aa,#6c63ff);
+  --grad3:linear-gradient(135deg,#ff6b9d,#ffd166);
+  --font-d:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
+  --r:16px;--r-lg:24px;--transition:0.3s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="light"]{--bg:#f5f5ff;--bg2:#ebebff;--surface:rgba(0,0,0,0.03);--surface2:rgba(0,0,0,0.06);--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);--text:#0d0d1a;--text2:#4a4a6a;--text3:#8a8aaa;}
+html,body{height:100%}
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow:hidden;line-height:1.6;display:flex;flex-direction:column;transition:background var(--transition),color var(--transition)}
+::selection{background:rgba(108,99,255,0.3);color:#fff}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+/* ── ORBS ── */
+.orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orbF 12s ease-in-out infinite}
+.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,0.14),transparent 70%);top:-200px;left:-150px}
+.o2{width:350px;height:350px;background:radial-gradient(circle,rgba(255,107,157,0.1),transparent 70%);bottom:-100px;right:-80px;animation-delay:-5s}
+.o3{width:250px;height:250px;background:radial-gradient(circle,rgba(0,212,170,0.08),transparent 70%);top:50%;left:55%;animation-delay:-9s}
+@keyframes orbF{0%,100%{transform:translate(0,0)}33%{transform:translate(20px,-15px)}66%{transform:translate(-15px,10px)}}
+
+/* ── APP BAR ── */
+.app-bar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;border-bottom:1px solid var(--border);background:rgba(7,7,13,0.8);backdrop-filter:blur(20px);position:relative;z-index:100;flex-shrink:0;transition:background var(--transition)}
+[data-theme="light"] .app-bar{background:rgba(245,245,255,0.85)}
+.app-logo{font-family:var(--font-d);font-size:1.35rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;letter-spacing:-0.02em}
+.app-logo-dot{-webkit-text-fill-color:var(--accent3);color:var(--accent3)}
+.bar-right{display:flex;align-items:center;gap:0.625rem}
+.theme-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.9rem;transition:all 0.2s}
+.theme-btn:hover{border-color:var(--accent)}
+.plan-badge{padding:0.25rem 0.7rem;border-radius:100px;font-size:0.67rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;display:none}
+.plan-badge.show{display:block}
+.plan-badge.start{background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.25);color:#a89dff}
+.plan-badge.pro{background:rgba(0,212,170,0.12);border:1px solid rgba(0,212,170,0.25);color:var(--accent3)}
+.plan-badge.unlimited{background:linear-gradient(135deg,rgba(255,209,102,0.15),rgba(255,107,157,0.15));border:1px solid rgba(255,209,102,0.3);color:var(--gold)}
+.back-btn{display:none;align-items:center;gap:0.35rem;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:0.35rem 0.875rem;color:var(--text2);font-size:0.78rem;cursor:pointer;font-family:var(--font-b);transition:all 0.2s}
+.back-btn.show{display:flex}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sim-display{font-size:0.75rem;color:var(--text3);display:none}
+.sim-display.show{display:block}
+.sim-display em{color:var(--accent);font-style:normal;font-weight:700}
+.logout-btn{font-size:0.75rem;color:var(--text3);cursor:pointer;background:none;border:none;padding:0.25rem 0.5rem;font-family:var(--font-b);transition:color 0.2s;display:none}
+.logout-btn.show{display:block}
+.logout-btn:hover{color:var(--accent2)}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;min-height:calc(100vh - 64px);position:relative;z-index:1;overflow:auto}
+.screen.active{display:flex}
+
+/* ── UNLOCK ── */
+#unlock-screen{align-items:center;justify-content:center;padding:2rem}
+.unlock-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:2.5rem 2rem;max-width:420px;width:100%;text-align:center;animation:fadeUp 0.5s ease-out;position:relative;overflow:hidden}
+.unlock-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 30%,rgba(108,99,255,0.05),transparent);pointer-events:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.unlock-icon{font-size:3rem;margin-bottom:1rem;display:block;position:relative}
+.unlock-wrap h1{font-family:var(--font-d);font-size:1.5rem;font-weight:800;margin-bottom:0.5rem;position:relative;letter-spacing:-0.02em}
+.unlock-wrap p{color:var(--text2);font-size:0.875rem;margin-bottom:1.5rem;line-height:1.65;position:relative}
+.grad-1{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.code-input{width:100%;padding:0.875rem 1.25rem;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;outline:none;transition:all 0.2s;margin-bottom:0.75rem;position:relative}
+.code-input::placeholder{text-transform:none;font-weight:400;letter-spacing:0;font-family:var(--font-b);color:var(--text3);font-size:0.875rem}
+.code-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.12)}
+.code-input.error{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(255,107,157,0.12);animation:shake 0.4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+
+.unlock-err{color:var(--accent2);font-size:0.78rem;margin-bottom:0.75rem;display:none;position:relative}
+.unlock-err.show{display:block}
+
+.unlock-btn{width:100%;padding:0.875rem;background:var(--grad1);border:none;border-radius:var(--r);color:#fff;font-family:var(--font-d);font-weight:700;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 20px rgba(108,99,255,0.3);transition:all 0.2s;margin-bottom:1.25rem;position:relative;letter-spacing:0.01em}
+.unlock-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(108,99,255,0.5)}
+
+.divider{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.1rem;color:var(--text3);font-size:0.78rem;position:relative}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.buy-link{display:block;text-align:center;color:var(--accent);font-size:0.85rem;font-weight:600;text-decoration:none;padding:0.4rem;transition:color 0.2s;position:relative}
+.buy-link:hover{color:var(--accent2)}
+
+.hint-box{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:left;margin-top:1.25rem;position:relative}
+.hint-box p{font-size:0.72rem;color:var(--text3);margin-bottom:0.4rem}
+.hint-code{display:flex;align-items:center;justify-content:space-between;font-size:0.78rem;color:var(--text2);background:var(--surface2);padding:0.25rem 0.625rem;border-radius:8px;margin-bottom:0.3rem;font-family:monospace;letter-spacing:0.05em}
+.hint-plan{font-size:0.68rem;color:var(--text3)}
+
+/* ── SCENARIO ── */
+#scenario-screen{align-items:center;justify-content:center;padding:1.5rem;gap:1.5rem}
+.scenario-head{text-align:center;position:relative}
+.scenario-head h2{font-family:var(--font-d);font-size:clamp(1.4rem,4vw,2rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:0.5rem}
+.scenario-head p{color:var(--text2);font-size:0.875rem}
+.sect-lbl{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.68rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);padding:0.22rem 0.7rem;background:rgba(108,99,255,0.08);border:1px solid rgba(108,99,255,0.2);border-radius:100px;margin-bottom:0.75rem}
+
+.scenarios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;max-width:720px;width:100%}
+@media(max-width:560px){.scenarios-grid{grid-template-columns:1fr}}
+
+.sc-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.75rem 1.4rem;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden}
+.sc-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.sc-card:nth-child(1)::before{background:linear-gradient(135deg,rgba(108,99,255,0.07),rgba(255,107,157,0.04))}
+.sc-card:nth-child(2)::before{background:linear-gradient(135deg,rgba(0,212,170,0.07),rgba(108,99,255,0.04))}
+.sc-card:nth-child(3)::before{background:linear-gradient(135deg,rgba(255,107,157,0.07),rgba(255,209,102,0.04))}
+.sc-card:hover{transform:translateY(-6px);border-color:var(--border2);box-shadow:0 12px 40px rgba(108,99,255,0.14)}
+.sc-card:hover::before{opacity:1}
+.sc-card:hover .sc-icon{transform:scale(1.15)}
+.sc-icon{font-size:2.75rem;display:block;margin-bottom:1rem;transition:transform 0.3s;position:relative}
+.sc-name{font-family:var(--font-d);font-size:1.05rem;font-weight:700;margin-bottom:0.4rem;position:relative}
+.sc-desc{font-size:0.78rem;color:var(--text2);line-height:1.55;position:relative;margin-bottom:0.875rem}
+.sc-tag{display:inline-block;padding:0.18rem 0.6rem;border-radius:100px;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase}
+.tag-easy{background:rgba(0,212,170,0.12);color:var(--accent3)}
+.tag-med{background:rgba(108,99,255,0.12);color:#a89dff}
+.tag-hard{background:rgba(255,107,157,0.12);color:var(--accent2)}
+
+/* ── CHAT SCREEN ── */
+#chat-screen{flex-direction:column;height:calc(100vh - 64px);overflow:hidden;position:relative}
+.chat-top-bar{padding:0.75rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem;background:rgba(255,255,255,0.01);flex-shrink:0;position:relative;z-index:5}
+.ctb-icon{font-size:1.2rem}
+.ctb-name{font-family:var(--font-d);font-size:0.875rem;font-weight:700}
+.ctb-status{font-size:0.7rem;color:var(--accent3);display:flex;align-items:center;gap:0.3rem;margin-left:auto}
+.ctb-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent3);box-shadow:0 0 5px var(--accent3)}
+.ctb-exc{font-size:0.72rem;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.18rem 0.55rem}
+
+.chat-body{flex:1;overflow-y:auto;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:0.875rem;scroll-behavior:smooth}
+.cmsg{display:flex;gap:0.6rem;align-items:flex-end;animation:msgIn 0.4s ease-out}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cmsg.user{flex-direction:row-reverse}
+.cmsg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.85rem}
+.cmsg-av.ai{background:var(--grad1)}
+.cmsg-av.usr{background:rgba(0,212,170,0.12);border:1px solid rgba(0,212,170,0.25)}
+.cmsg-b{max-width:77%;padding:0.7rem 0.95rem;border-radius:17px;font-size:0.875rem;line-height:1.6}
+.cmsg.ai .cmsg-b{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:3px}
+.cmsg.user .cmsg-b{background:var(--grad1);color:#fff;border-bottom-right-radius:3px}
+.typing-row{display:none;gap:0.6rem;align-items:flex-end}
+.typing-row.show{display:flex}
+.typing-d{display:flex;gap:4px;padding:0.7rem 0.875rem;background:var(--surface2);border:1px solid var(--border);border-radius:17px;border-bottom-left-radius:3px}
+.typing-d span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:td 1.4s infinite}
+.typing-d span:nth-child(2){animation-delay:0.2s}
+.typing-d span:nth-child(3){animation-delay:0.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* EVALUATION */
+.eval-card{background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,170,0.04));border:1px solid rgba(108,99,255,0.22);border-radius:20px;padding:1.4rem;animation:msgIn 0.5s ease-out;margin:0.25rem 0}
+.ec-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
+.ec-title{font-family:var(--font-d);font-weight:800;font-size:0.95rem}
+.ec-score-wrap{display:flex;align-items:baseline;gap:0.1rem}
+.ec-score{font-family:var(--font-d);font-size:2.5rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.ec-of{color:var(--text3);font-size:0.8rem}
+.ec-bar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:1.1rem}
+.ec-fill{height:100%;background:var(--grad1);border-radius:3px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1)}
+.ec-section{margin-bottom:0.875rem}
+.ec-section h4{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:0.4rem}
+.ec-line{display:flex;gap:0.4rem;font-size:0.82rem;color:var(--text2);margin-bottom:0.25rem;line-height:1.5}
+.ec-line.pos::before{content:'✓';color:var(--accent3);font-weight:700;flex-shrink:0}
+.ec-line.neg::before{content:'→';color:var(--accent2);font-weight:700;flex-shrink:0}
+.ec-summary{background:var(--surface2);border-radius:12px;padding:0.875rem;font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:1.1rem}
+.ec-btns{display:flex;gap:0.625rem;flex-wrap:wrap}
+.ec-btn{padding:0.55rem 1.1rem;border-radius:100px;font-family:var(--font-d);font-weight:700;font-size:0.82rem;cursor:pointer;text-decoration:none;border:none;display:inline-flex;align-items:center;gap:0.35rem;transition:all 0.2s}
+.ec-btn.p{background:var(--grad1);color:#fff;box-shadow:0 4px 14px rgba(108,99,255,0.3)}
+.ec-btn.p:hover{box-shadow:0 6px 20px rgba(108,99,255,0.5)}
+.ec-btn.s{background:var(--surface2);border:1px solid var(--border2);color:var(--text)}
+.ec-btn.s:hover{border-color:var(--accent);color:var(--accent)}
+
+/* CHAT INPUT */
+.chat-input-bar{padding:0.875rem 1.25rem;border-top:1px solid var(--border);background:rgba(7,7,13,0.6);backdrop-filter:blur(10px);flex-shrink:0;position:relative;z-index:5}
+[data-theme="light"] .chat-input-bar{background:rgba(245,245,255,0.8)}
+.ci-row{display:flex;gap:0.625rem;align-items:flex-end}
+.ci-ta{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:20px;padding:0.7rem 1rem;color:var(--text);font-family:var(--font-b);font-size:0.875rem;resize:none;max-height:100px;min-height:42px;outline:none;transition:border-color 0.2s;line-height:1.5}
+.ci-ta:focus{border-color:var(--accent)}
+.ci-ta::placeholder{color:var(--text3)}
+.ci-ta:disabled{opacity:0.5;cursor:not-allowed}
+.ci-send{width:42px;height:42px;border-radius:50%;background:var(--grad1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 4px 14px rgba(108,99,255,0.3);transition:all 0.2s}
+.ci-send:hover:not(:disabled){transform:scale(1.1);box-shadow:0 6px 20px rgba(108,99,255,0.5)}
+.ci-send:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.ci-chars{text-align:right;font-size:0.68rem;color:var(--text3);margin-top:0.25rem}
+
+/* PLAN GATE */
+.plan-gate{margin:0.5rem 0;padding:1.25rem;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(255,107,157,0.05));border:1px solid rgba(108,99,255,0.2);border-radius:16px;animation:msgIn 0.4s ease-out;text-align:center}
+.plan-gate h4{font-family:var(--font-d);font-weight:700;font-size:0.9rem;margin-bottom:0.4rem}
+.plan-gate p{color:var(--text2);font-size:0.8rem;line-height:1.55;margin-bottom:1rem}
+.pg-btns{display:flex;gap:0.625rem;justify-content:center;flex-wrap:wrap}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;padding:0.75rem 1.1rem;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;font-size:0.85rem;display:none;align-items:center;gap:0.5rem;box-shadow:0 8px 28px rgba(0,0,0,0.4);max-width:320px}
+.toast.show{display:flex;animation:toastIn 0.3s ease-out}
+@keyframes toastIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+  </style>
 </head>
-<body class="app-body">
-    <!-- App Header -->
-    <header class="app-header">
-        <div class="app-header-content">
-            <div class="logo">⚡ Ripost</div>
-            <div class="app-header-info" id="headerInfo" style="display: none;">
-                <span id="packageInfo">PAKIET: PRO</span>
-                <span id="simulationsInfo">Pozostało: 5</span>
-            </div>
-            <button class="btn-logout" id="logoutBtn" style="display: none;">Wyloguj</button>
-        </div>
-    </header>
+<body>
 
-    <!-- Unlock Screen -->
-    <div id="unlockScreen" class="unlock-screen">
-        <div class="unlock-container">
-            <div class="unlock-icon">🔐</div>
-            <h1>Wprowadź kod dostępu</h1>
-            <p>Wpisz kod otrzymany po zakupie pakietu</p>
-            <form id="unlockForm">
-                <input 
-                    type="text" 
-                    id="accessCode" 
-                    placeholder="np. PRO-49" 
-                    class="unlock-input"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
-                <button type="submit" class="btn-primary">Aktywuj</button>
-            </form>
-            <div id="unlockError" class="unlock-error" style="display: none;"></div>
-            <div class="unlock-footer">
-                <p>Nie masz jeszcze kodu?</p>
-                <a href="index.html#pricing" class="link-primary">Kup pakiet</a>
-            </div>
-        </div>
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+<!-- APP BAR -->
+<div class="app-bar">
+  <a href="index.html" class="app-logo">Ripost<span class="app-logo-dot">.</span></a>
+  <div class="bar-right">
+    <div class="sim-display" id="sim-disp">Symulacje: <em id="sim-left">-</em></div>
+    <div class="plan-badge" id="plan-badge"></div>
+    <button class="theme-btn" id="theme-btn" title="Zmień motyw">🌙</button>
+    <button class="back-btn" id="back-btn" onclick="goBack()">← Scenariusze</button>
+    <button class="logout-btn" id="logout-btn" onclick="logout()">Wyloguj</button>
+  </div>
+</div>
+
+<!-- ═══ UNLOCK ═══ -->
+<div class="screen active" id="unlock-screen">
+  <div class="unlock-wrap">
+    <span class="unlock-icon">🔑</span>
+    <h1>Wpisz <span class="grad-1">kod dostępu</span></h1>
+    <p>Wprowadź kod aktywacyjny po zakupie planu lub użyj kodu demo do testowania.</p>
+    <input type="text" class="code-input" id="access-code" placeholder="np. DEMO-2026 lub PRO-49" maxlength="20" autocomplete="off" spellcheck="false"/>
+    <div class="unlock-err" id="unlock-err">❌ Nieprawidłowy kod. Sprawdź i spróbuj ponownie.</div>
+    <button class="unlock-btn" onclick="handleUnlock()">Odblokuj dostęp →</button>
+    <div class="divider">lub</div>
+    <a href="pricing.html" class="buy-link">🛒 Kup plan i otrzymaj kod dostępu</a>
+    <div class="hint-box">
+      <p>🧪 Kody testowe (usuń przed produkcją):</p>
+      <div class="hint-code">DEMO-2026 <span class="hint-plan">→ START · 1 sim</span></div>
+      <div class="hint-code">PRO-49 <span class="hint-plan">→ PRO · 5 sim</span></div>
+      <div class="hint-code">UNLIMITED-99 <span class="hint-plan">→ UNLIMITED · ∞ · 30 dni</span></div>
     </div>
+  </div>
+</div>
 
-    <!-- Scenario Selection Screen -->
-    <div id="scenarioScreen" class="scenario-screen" style="display: none;">
-        <div class="scenario-container">
-            <h1>Wybierz scenariusz</h1>
-            <p>Którą rozmowę chcesz przećwiczyć?</p>
-            <div class="scenario-grid">
-                <button class="scenario-card" onclick="selectScenario('raise')">
-                    <div class="scenario-icon">💰</div>
-                    <h3>Podwyżka</h3>
-                    <p>Negocjuj wyższą pensję z szefem</p>
-                </button>
-                <button class="scenario-card" onclick="selectScenario('promotion')">
-                    <div class="scenario-icon">📈</div>
-                    <h3>Awans</h3>
-                    <p>Przekonaj do awansu na wyższe stanowisko</p>
-                </button>
-                <button class="scenario-card" onclick="selectScenario('interview')">
-                    <div class="scenario-icon">🎯</div>
-                    <h3>Rekrutacja</h3>
-                    <p>Przejdź trudną rozmowę rekrutacyjną</p>
-                </button>
-            </div>
-        </div>
+<!-- ═══ SCENARIO ═══ -->
+<div class="screen" id="scenario-screen">
+  <div class="scenario-head">
+    <span class="sect-lbl">✦ Wybierz scenariusz</span>
+    <h2>Czego chcesz <span class="grad-1">dziś ćwiczyć?</span></h2>
+    <p>Każdy scenariusz to realna sytuacja zawodowa z adaptacyjnym AI trenerem</p>
+  </div>
+  <div class="scenarios-grid">
+    <div class="sc-card" onclick="startChat('salary')">
+      <span class="sc-icon">💰</span>
+      <div class="sc-name">Podwyżka</div>
+      <p class="sc-desc">Ćwicz rozmowę o wyższe wynagrodzenie z wymagającym menadżerem. Argumenty, dane, obiekcje.</p>
+      <span class="sc-tag tag-med">Średni</span>
     </div>
-
-    <!-- Chat Screen -->
-    <div id="chatScreen" class="chat-screen" style="display: none;">
-        <div class="chat-header">
-            <button class="btn-back" onclick="backToScenarios()">← Powrót</button>
-            <h2 id="chatScenarioTitle">Podwyżka</h2>
-        </div>
-        <div class="chat-container">
-            <div class="chat-messages" id="chatMessages"></div>
-        </div>
-        <div class="chat-input-container">
-            <input 
-                type="text" 
-                id="chatInput" 
-                placeholder="Wpisz swoją odpowiedź..."
-                class="chat-input"
-            >
-            <button class="btn-send" id="sendBtn" onclick="sendMessage()">
-                <span class="send-icon">➤</span>
-            </button>
-        </div>
+    <div class="sc-card" onclick="startChat('promotion')">
+      <span class="sc-icon">📈</span>
+      <div class="sc-name">Awans</div>
+      <p class="sc-desc">Zbuduj przekonującą narrację o gotowości do wyższego stanowiska i większej odpowiedzialności.</p>
+      <span class="sc-tag tag-easy">Łatwy</span>
     </div>
+    <div class="sc-card" onclick="startChat('recruitment')">
+      <span class="sc-icon">🎯</span>
+      <div class="sc-name">Rekrutacja</div>
+      <p class="sc-desc">Negocjuj warunki oferty pracy i odpowiadaj na trudne pytania rekrutera. Wynegocjuj lepszy pakiet.</p>
+      <span class="sc-tag tag-hard">Trudny</span>
+    </div>
+  </div>
+</div>
 
-    <script src="assets/js/app.js"></script>
+<!-- ═══ CHAT ═══ -->
+<div class="screen" id="chat-screen">
+  <div class="chat-top-bar">
+    <span class="ctb-icon" id="ctb-icon">💰</span>
+    <span class="ctb-name" id="ctb-name">Rozmowa o podwyżkę</span>
+    <span class="ctb-status">AI aktywny</span>
+    <span class="ctb-exc" id="ctb-exc">0 / 5</span>
+  </div>
+  <div class="chat-body" id="chat-body"></div>
+  <div id="typing-wrapper" style="padding:0 1.25rem 0.25rem;display:none">
+    <div class="typing-row show">
+      <div class="cmsg-av ai">🤖</div>
+      <div class="typing-d"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+  <div class="chat-input-bar">
+    <div class="ci-row">
+      <textarea class="ci-ta" id="ci-ta" placeholder="Wpisz wiadomość..." rows="1" maxlength="500" oninput="autoResize(this);updateChars()"></textarea>
+      <button class="ci-send" id="ci-send" onclick="sendMsg()">➤</button>
+    </div>
+    <div class="ci-chars"><span id="ci-chars">0</span>/500</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="t-ico">✅</span><span id="t-msg"></span></div>
+
+<!-- ── Supabase SDK ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+// ╔══════════════════════════════════════════╗
+// ║  RIPOST — KONFIGURACJA (gotowa do użycia) ║
+// ╚══════════════════════════════════════════╝
+const SUPABASE_URL  = window.SUPABASE_URL;
+const SUPABASE_ANON = window.SUPABASE_ANON;
+const GROQ_KEY      = '';
+const STRIPE_PK          = window.STRIPE_PK;
+const PRICE_STARTER_ID   = window.PRICE_29;
+const PRICE_PRO_ID       = window.PRICE_49;
+const PRICE_UNLIMITED_ID = window.PRICE_99;
+
+// Init Supabase
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+async function getUser()  { const {data:{user}} = await _sb.auth.getUser(); return user; }
+async function signIn(e,p)  { return _sb.auth.signInWithPassword({email:e,password:p}); }
+async function signUp(e,p)  { return _sb.auth.signUp({email:e,password:p,options:{emailRedirectTo:'https://ripost.vercel.app'}}); }
+async function signOut()    { await _sb.auth.signOut(); updateAuthUI(null); }
+
+async function saveSessionCloud(scenario, score) {
+  const user = await getUser();
+  if (!user) return;
+  await _sb.from('sessions').insert({user_id:user.id, scenario, score, messages_count: exchCount||0});
+}
+
+function updateAuthUI(user) {
+  const lb = document.getElementById('auth-login-btn');
+  const ub = document.getElementById('auth-user-badge');
+  if (!lb || !ub) return;
+  if (user) { lb.style.display='none'; ub.style.display='flex'; const em=ub.querySelector('.auth-email'); if(em) em.textContent=user.email?.split('@')[0]||'Konto'; }
+  else { lb.style.display='flex'; ub.style.display='none'; }
+}
+
+async function callGroqAI(messages, scenario) {
+  const PROMPTS = {
+    salary: 'Jesteś wymagającym dyrektorem HR który prowadzi rozmowę o podwyżce. Stawiaj trudne pytania, nie odpuszczaj łatwo. Odpowiadaj PO POLSKU, krótko (2-3 zdania).',
+    promotion: 'Jesteś sceptycznym CEO który rozmawia z pracownikiem o awansie. Pytaj o wyniki, kwestionuj gotowość. Odpowiadaj PO POLSKU, krótko (2-3 zdania).',
+    recruitment: 'Jesteś doświadczonym rekruterem który prowadzi rozmowę kwalifikacyjną. Zadawaj trudne pytania behawioralne. Odpowiadaj PO POLSKU, krótko (2-3 zdania).',
+    client: 'Jesteś trudnym klientem który negocjuje warunki umowy. Bądź wymagający i dociekliwy. Odpowiadaj PO POLSKU, krótko (2-3 zdania).'
+  };
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer GROQ_KEY_PLACEHOLDER'},
+      body: JSON.stringify({
+        model:'llama-3.1-70b-versatile',
+        messages:[{role:'system',content:PROMPTS[scenario]||PROMPTS.salary},...messages],
+        max_tokens:180, temperature:0.85
+      })
+    });
+    if (!res.ok) return null;
+    const d = await res.json();
+    return d.choices?.[0]?.message?.content || null;
+  } catch(e) { return null; }
+}
+
+function showAuthModal(mode='login') {
+  const ov=document.getElementById('auth-overlay');
+  const ti=document.getElementById('auth-modal-title');
+  const sw=document.getElementById('auth-switch');
+  const sb=document.getElementById('auth-submit');
+  if(!ov) return;
+  ov.dataset.mode=mode;
+  if(mode==='login'){ti.textContent='Zaloguj się';sb.textContent='Zaloguj';sw.innerHTML='Nie masz konta? <span style="color:var(--accent3);cursor:pointer" onclick="showAuthModal(\'register\')">Zarejestruj się</span>';}
+  else{ti.textContent='Utwórz konto';sb.textContent='Zarejestruj';sw.innerHTML='Masz konto? <span style="color:var(--accent3);cursor:pointer" onclick="showAuthModal(\'login\')">Zaloguj się</span>';}
+  ov.classList.add('show');
+}
+
+async function submitAuth() {
+  const ov=document.getElementById('auth-overlay');
+  const mode=ov?.dataset.mode||'login';
+  const email=document.getElementById('auth-email')?.value.trim();
+  const pass=document.getElementById('auth-password')?.value;
+  const err=document.getElementById('auth-err');
+  if(!email||!pass){if(err){err.textContent='Podaj email i hasło.';err.style.display='block';}return;}
+  const sb2=document.getElementById('auth-submit');
+  if(sb2){sb2.disabled=true;sb2.textContent='Chwila...';}
+  const {data,error} = mode==='login'?await signIn(email,pass):await signUp(email,pass);
+  if(error){if(err){err.textContent=error.message;err.style.display='block';}if(sb2){sb2.disabled=false;sb2.textContent=mode==='login'?'Zaloguj':'Zarejestruj';}return;}
+  ov.classList.remove('show');
+  updateAuthUI(data.user);
+  showToast('✅',mode==='login'?'Zalogowano!':'Sprawdź email — potwierdź rejestrację.');
+}
+
+(async()=>{
+  const user=await getUser();
+  updateAuthUI(user);
+  _sb.auth.onAuthStateChange((_,session)=>updateAuthUI(session?.user||null));
+})();
+</script>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  RIPOST — KONFIGURACJA BACKENDU                             ║
+// ║  Wklej swoje klucze tutaj (instrukcja: backend-setup.html)  ║
+// ╚══════════════════════════════════════════════════════════════╝
+const SUPABASE_URL  = 'https://TWÓJ_PROJEKT.supabase.co';    // ← skopiuj z Supabase → Settings → API
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.TWÓJ_KLUCZ'; // ← anon public key
+const GROQ_KEY      = 'gsk_TWÓJ_KLUCZ_GROQ';                // ← z console.groq.com
+
+// Stripe Price IDs (skopiuj z Stripe → Products)
+const STRIPE_PK           = 'pk_live_TWÓJ_PUBLISHABLE_KEY';
+const PRICE_STARTER_ID    = 'price_XXXXXXXXXXXXX';  // 29 zł
+const PRICE_PRO_ID        = 'price_XXXXXXXXXXXXX';  // 49 zł
+const PRICE_UNLIMITED_ID  = 'price_XXXXXXXXXXXXX';  // 99 zł/mies.
+
+// ── Inicjalizacja Supabase (działa jeśli URL jest ustawiony) ──
+let supabase = null;
+if (SUPABASE_URL !== 'https://TWÓJ_PROJEKT.supabase.co') {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+}
+
+// ── Auth helpers ───────────────────────────────────────────────
+async function getUser() {
+  if (!supabase) return null;
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+}
+
+async function signIn(email, password) {
+  if (!supabase) return { error: { message: 'Backend nie skonfigurowany' } };
+  return await supabase.auth.signInWithPassword({ email, password });
+}
+
+async function signUp(email, password) {
+  if (!supabase) return { error: { message: 'Backend nie skonfigurowany' } };
+  return await supabase.auth.signUp({ email, password });
+}
+
+async function signOut() {
+  if (!supabase) return;
+  await supabase.auth.signOut();
+  updateAuthUI(null);
+}
+
+// ── Session save (localStorage + Supabase) ────────────────────
+async function saveSessionCloud(scenario, score, feedback) {
+  const user = await getUser();
+  if (!user || !supabase) return;
+  await supabase.from('sessions').insert({
+    user_id: user.id,
+    scenario,
+    score,
+    feedback,
+    messages_count: exchCount || 0
+  });
+}
+
+// ── Auth UI updates ───────────────────────────────────────────
+async function updateAuthUI(user) {
+  const loginBtn = document.getElementById('auth-login-btn');
+  const userBadge = document.getElementById('auth-user-badge');
+  if (!loginBtn || !userBadge) return;
+  if (user) {
+    loginBtn.style.display = 'none';
+    userBadge.style.display = 'flex';
+    userBadge.querySelector('.auth-email').textContent = user.email?.split('@')[0] || 'Użytkownik';
+  } else {
+    loginBtn.style.display = 'flex';
+    userBadge.style.display = 'none';
+  }
+}
+
+// ── Groq API call (zastępuje lokalne odpowiedzi AI) ───────────
+async function callGroqAI(messages, scenario) {
+  if (GROQ_KEY === 'gsk_TWÓJ_KLUCZ_GROQ') return null; // fallback do lokalnego
+  try {
+    const systemPrompt = `Jesteś wymagającym ${scenario === 'salary' ? 'menedżerem HR' : 
+      scenario === 'promotion' ? 'dyrektorem HR' : 
+      scenario === 'recruitment' ? 'rekruterem' : 'rozmówcą'} który prowadzi trudną rozmowę zawodową w języku polskim.
+Twoja rola: być realistyczny, stawiać trudne pytania, nie odpuszczać łatwo.
+Odpowiadaj KRÓTKO (1-3 zdania). Bądź konkretny. Używaj polskich realiów biznesowych.
+NIE pomagaj użytkownikowi — testuj go. Kiedy sesja powinna się skończyć (po 6-8 wymianach lub jeśli rozmowa dobiegła naturalnego końca), zakończ rozmowę konkluzją.`;
+    
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+      body: JSON.stringify({
+        model: 'llama-3.1-70b-versatile',
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        max_tokens: 200,
+        temperature: 0.8
+      })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || null;
+  } catch(e) { return null; }
+}
+
+// ── Modal Auth ────────────────────────────────────────────────
+function showAuthModal(mode = 'login') {
+  const overlay = document.getElementById('auth-overlay');
+  const title = document.getElementById('auth-modal-title');
+  const switchBtn = document.getElementById('auth-switch');
+  const submitBtn = document.getElementById('auth-submit');
+  if (!overlay) return;
+  overlay.dataset.mode = mode;
+  if (mode === 'login') {
+    title.textContent = 'Zaloguj się';
+    submitBtn.textContent = 'Zaloguj';
+    switchBtn.innerHTML = 'Nie masz konta? <span style="color:var(--accent3);cursor:pointer" onclick="showAuthModal('register')">Zarejestruj się</span>';
+  } else {
+    title.textContent = 'Utwórz konto';
+    submitBtn.textContent = 'Zarejestruj';
+    switchBtn.innerHTML = 'Masz konto? <span style="color:var(--accent3);cursor:pointer" onclick="showAuthModal('login')">Zaloguj się</span>';
+  }
+  overlay.classList.add('show');
+}
+
+async function submitAuth() {
+  const overlay = document.getElementById('auth-overlay');
+  const mode = overlay?.dataset.mode || 'login';
+  const email = document.getElementById('auth-email')?.value.trim();
+  const password = document.getElementById('auth-password')?.value;
+  const errEl = document.getElementById('auth-err');
+  if (!email || !password) { if(errEl) { errEl.textContent = 'Podaj email i hasło.'; errEl.style.display='block'; } return; }
+  const submitBtn = document.getElementById('auth-submit');
+  if(submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Proszę czekać...'; }
+  const { data, error } = mode === 'login' ? await signIn(email, password) : await signUp(email, password);
+  if (error) {
+    if(errEl) { errEl.textContent = error.message; errEl.style.display='block'; }
+    if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = mode === 'login' ? 'Zaloguj' : 'Zarejestruj'; }
+    return;
+  }
+  overlay.classList.remove('show');
+  updateAuthUI(data.user);
+  showToast('✅', mode === 'login' ? 'Zalogowano!' : 'Konto utworzone! Sprawdź email.');
+}
+
+// ── Init auth state ───────────────────────────────────────────
+(async () => {
+  if (!supabase) return;
+  const user = await getUser();
+  updateAuthUI(user);
+  supabase.auth.onAuthStateChange((event, session) => {
+    updateAuthUI(session?.user || null);
+  });
+})();
+</script>
+
+
+<script>
+// ── ACCESS CODES ──────────────────────────────────────────
+const CODES = {
+  'DEMO-2026': {plan:'START', sims:1},
+  'PRO-49':    {plan:'PRO',   sims:5},
+  'UNLIMITED-99': {plan:'UNLIMITED', sims:Infinity}
+};
+
+// ── SCENARIOS ─────────────────────────────────────────────
+const SCENARIOS = {
+  salary:{
+    icon:'💰', name:'Rozmowa o podwyżkę',
+    intro:'Dzień dobry. Rozumiem, że chciałeś ze mną porozmawiać o ważnej sprawie. Słucham.',
+    ai:[
+      m=>'Rozumiem. Zanim przejdziemy dalej — powiedz mi konkretnie: jakie wyniki osiągnąłeś w ostatnim roku? Liczby, fakty, wartość biznesowa.',
+      m=>'Interesujące. Jednak budżet na podwyżki jest napięty. Inni w zespole też pracują ciężko. Dlaczego właśnie Ty zasługujesz bardziej?',
+      m=>'Mam wątpliwości co do proponowanej kwoty. Czy sprawdziłeś dane rynkowe? Na czym opierasz tę liczbę?',
+      m=>'To sensowna propozycja etapowa. Daj mi kilka dni na konsultację z HR. Ale pytanie: co się stanie, jeśli odpowiedź będzie negatywna?',
+    ],
+    evalData:{
+      positives:['Dobre przygotowanie danych liczbowych','Spokojny i profesjonalny ton rozmowy','Elastyczna propozycja etapowa'],
+      improvements:['Ćwicz "silent pause" po podaniu kwoty — nie mów nic przez 10 sekund','Przygotuj BATNA — co zrobisz jeśli odmówią?','Zapytaj o konkretny termin odpowiedzi'],
+      summary:'Solidna rozmowa! Twoje dane były mocne. Kluczowy obszar do poprawy: używanie ciszy jako narzędzia nacisku oraz posiadanie alternatyw.'
+    }
+  },
+  promotion:{
+    icon:'📈', name:'Rozmowa o awans',
+    intro:'Cześć! Słyszałem, że chcesz porozmawiać o swojej ścieżce kariery. Jestem słucham.',
+    ai:[
+      m=>'Co konkretnie sprawiło, że czujesz się gotowy do przejęcia większej odpowiedzialności? Wymień 3 rzeczy.',
+      m=>'Zarządzanie zespołem to inny zestaw kompetencji niż praca ekspercka. Jak planujesz rozwinąć umiejętności przywódcze?',
+      m=>'Co byś zrobił inaczej niż Twój poprzednik? Mamy kilka obszarów wymagających zmian.',
+      m=>'Doceniam zaangażowanie. Propozycja: przez 3 miesiące weźmiesz pod opiekę 2 juniorów jako mentoring. Potem wracamy do tematu oficjalnie. Zgoda?',
+    ],
+    evalData:{
+      positives:['Jasno zakomunikowany cel','Dobre odniesienia do konkretnych projektów','Wykazałeś gotowość do dodatkowych zadań'],
+      improvements:['Przygotuj plan "30-60-90 dni" na nowej roli','Zaproponuj sam ewaluację po 3 miesiącach — to redukuje ryzyko menadżera','Każdy argument popieraj liczbą lub wynikiem'],
+      summary:'Dobra baza! Następnym razem wejdź z konkretnym planem działania — to pokaże dojrzałość i odróżni Cię od kandydatów "chcę awansu, bo pracuję długo".'
+    }
+  },
+  recruitment:{
+    icon:'🎯', name:'Negocjacje z rekruterem',
+    intro:'Dzień dobry! Cieszę się, że dotarliśmy do tego etapu. Zanim prześlemy ofertę — jakie są Pana/Pani oczekiwania finansowe?',
+    ai:[
+      m=>'To dość wysoka kwota. Na czym opierasz swoje oczekiwania? Mamy widełki budżetowe, które trudno przekroczyć.',
+      m=>'Rozumiem argumenty, ale przekraczasz nasz budżet o ok 15%. Czy jest jakiś margines elastyczności z Twojej strony?',
+      m=>'Mogę zaoferować wyższy base, ale musielibyśmy pominąć część benefitów. Co jest dla Ciebie ważniejsze — base czy package?',
+      m=>'Mamy kilku kandydatów. Kiedy możesz podjąć decyzję? Chcielibyśmy zamknąć temat do końca tygodnia.',
+    ],
+    evalData:{
+      positives:['Dobra technika zakotwiczenia cenowego','Elastyczność w negocjowaniu pakietu','Nie zdradziłeś zbyt wiele o swojej sytuacji'],
+      improvements:['Nie zgadzaj się na pierwszą ofertę — zawsze kontrpropozycja','Zapytaj o strukturę bonusu i equity przed akceptacją','Wyraź entuzjazm do roli, jednocześnie negocjując twardo'],
+      summary:'Solidna sesja! Rekruterzy spodziewają się negocjacji — brak kontrpropozycji często jest odczytywany jako brak pewności siebie. Następnym razem idź silniej.'
+    }
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────
+let plan=null, simsLeft=0, currentScenario=null, exchCount=0, aiIdx=0;
+const MAX_EXCH=4; // show eval after this many user messages
+
+// ── THEME ─────────────────────────────────────────────────
+const htmlEl=document.documentElement;
+const themeBtn=document.getElementById('theme-btn');
+let isDark=localStorage.getItem('ripost-theme')!=='light';
+function applyTheme(){htmlEl.setAttribute('data-theme',isDark?'dark':'light');themeBtn.textContent=isDark?'🌙':'☀️';localStorage.setItem('ripost-theme',isDark?'dark':'light');}
+applyTheme();
+themeBtn.addEventListener('click',()=>{isDark=!isDark;applyTheme();});
+
+// ── SESSION RESTORE ───────────────────────────────────────
+window.addEventListener('load',()=>{
+  try{
+    const code=localStorage.getItem('ripost_code');
+    const savedPlan=localStorage.getItem('ripost_plan');
+    const simsRaw=localStorage.getItem('ripost_sims');
+    const expiry=localStorage.getItem('ripost_expiry');
+    if(!code||!savedPlan)return;
+    if(expiry&&new Date()>new Date(expiry)){clearStorage();return;}
+    plan=savedPlan;
+    simsLeft=simsRaw==='unlimited'?Infinity:parseInt(simsRaw)||0;
+    showScreen('scenario');updateBar();
+  }catch(e){}
+});
+
+function clearStorage(){
+  try{['ripost_code','ripost_plan','ripost_sims','ripost_expiry'].forEach(k=>localStorage.removeItem(k));}catch(e){}
+}
+
+// ── UNLOCK ────────────────────────────────────────────────
+function handleUnlock(){
+  const raw=document.getElementById('access-code').value.trim().toUpperCase();
+  const inp=document.getElementById('access-code');
+  const err=document.getElementById('unlock-err');
+  if(!raw){inp.classList.add('error');setTimeout(()=>inp.classList.remove('error'),400);return;}
+  const found=CODES[raw];
+  if(!found){
+    err.classList.add('show');inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'),500);return;
+  }
+  err.classList.remove('show');
+  plan=found.plan; simsLeft=found.sims;
+  let expiry=null;
+  if(found.plan==='UNLIMITED'){const d=new Date();d.setDate(d.getDate()+30);expiry=d.toISOString();}
+  try{
+    localStorage.setItem('ripost_code',raw);
+    localStorage.setItem('ripost_plan',plan);
+    localStorage.setItem('ripost_sims',simsLeft===Infinity?'unlimited':simsLeft);
+    if(expiry)localStorage.setItem('ripost_expiry',expiry);
+  }catch(e){}
+  showToast('✅',`Dostęp odblokowany! Plan ${plan} aktywny.`);
+  setTimeout(()=>{showScreen('scenario');updateBar();},500);
+}
+document.getElementById('access-code').addEventListener('keydown',e=>{if(e.key==='Enter')handleUnlock();});
+
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(name+'-screen').classList.add('active');
+}
+function updateBar(){
+  const b=document.getElementById('plan-badge');
+  b.textContent=plan;b.className='plan-badge show '+plan.toLowerCase();
+  const sd=document.getElementById('sim-disp');
+  sd.classList.add('show');
+  document.getElementById('sim-left').textContent=simsLeft===Infinity?'∞':simsLeft;
+  document.getElementById('logout-btn').classList.add('show');
+}
+function goBack(){
+  showScreen('scenario');
+  document.getElementById('back-btn').classList.remove('show');
+  document.getElementById('chat-body').innerHTML='';
+  exchCount=0;aiIdx=0;
+  document.getElementById('ci-ta').disabled=false;
+  document.getElementById('ci-send').disabled=false;
+}
+function logout(){
+  clearStorage();plan=null;simsLeft=0;
+  document.getElementById('plan-badge').classList.remove('show');
+  document.getElementById('sim-disp').classList.remove('show');
+  document.getElementById('logout-btn').classList.remove('show');
+  document.getElementById('back-btn').classList.remove('show');
+  document.getElementById('access-code').value='';
+  showScreen('unlock');
+}
+
+// ── START CHAT ────────────────────────────────────────────
+function startChat(sc){
+  if(simsLeft===0){showToast('🚫','Brak dostępnych symulacji. Kup wyższy plan!');return;}
+  currentScenario=sc;aiIdx=0;exchCount=0;
+  const data=SCENARIOS[sc];
+  document.getElementById('ctb-icon').textContent=data.icon;
+  document.getElementById('ctb-name').textContent=data.name;
+  document.getElementById('ctb-exc').textContent='0 / '+MAX_EXCH;
+  document.getElementById('chat-body').innerHTML='';
+  document.getElementById('typing-wrapper').style.display='none';
+  document.getElementById('ci-ta').disabled=false;
+  document.getElementById('ci-send').disabled=false;
+  if(simsLeft!==Infinity){
+    simsLeft--;
+    try{localStorage.setItem('ripost_sims',simsLeft===Infinity?'unlimited':simsLeft);}catch(e){}
+    document.getElementById('sim-left').textContent=simsLeft;
+  }
+  showScreen('chat');
+  document.getElementById('back-btn').classList.add('show');
+  setTimeout(()=>addAI(data.intro),500);
+}
+
+// ── CHAT LOGIC ────────────────────────────────────────────
+function addAI(text,isEval=false){
+  const body=document.getElementById('chat-body');
+  const tw=document.getElementById('typing-wrapper');
+  tw.style.display='block';
+  body.scrollTop=body.scrollHeight;
+  return new Promise(res=>setTimeout(()=>{
+    tw.style.display='none';
+    if(isEval){
+      renderEval();res();return;
+    }
+    const d=document.createElement('div');
+    d.className='cmsg ai';
+    d.innerHTML=`<div class="cmsg-av ai">🤖</div><div class="cmsg-b">${esc(text)}</div>`;
+    body.appendChild(d);body.scrollTop=body.scrollHeight;res();
+  },900+Math.random()*500));
+}
+
+function renderEval(){
+  const data=SCENARIOS[currentScenario].evalData;
+  const score=Math.min(Math.floor(Math.random()*3)+6+Math.min(exchCount*0.3,2),10);
+  const scoreRound=Math.round(score*10)/10;
+  const body=document.getElementById('chat-body');
+  const card=document.createElement('div');
+  card.className='eval-card';
+  card.innerHTML=`
+    <div class="ec-top">
+      <div class="ec-title">🏆 Ocena sesji treningowej</div>
+      <div class="ec-score-wrap"><span class="ec-score">${scoreRound}</span><span class="ec-of">/10</span></div>
+    </div>
+    <div class="ec-bar"><div class="ec-fill" id="ecf" style="width:0%"></div></div>
+    <div class="ec-section">
+      <h4>✅ Mocne strony</h4>
+      ${data.positives.map(p=>`<div class="ec-line pos">${p}</div>`).join('')}
+    </div>
+    <div class="ec-section">
+      <h4>🔧 Do poprawy</h4>
+      ${data.improvements.map(i=>`<div class="ec-line neg">${i}</div>`).join('')}
+    </div>
+    <div class="ec-summary">${data.summary}</div>
+    <div class="ec-btns">
+      <button class="ec-btn p" onclick="startChat('${currentScenario}')">🔄 Ćwicz ponownie</button>
+      <button class="ec-btn s" onclick="goBack()">⬅ Inne scenariusze</button>
+      <a href="pricing.html" class="ec-btn s">📋 Upgrade</a>
+    </div>`;
+  body.appendChild(card);
+  body.scrollTop=body.scrollHeight;
+  // Save to history
+  saveSession(currentScenario, scoreRound);
+  setTimeout(()=>{const ef=document.getElementById('ecf');if(ef)ef.style.width=`${scoreRound*10}%`;},200);
+}
+
+function saveSession(scenario, score){
+  try{
+    const sessions=JSON.parse(localStorage.getItem('ripost_sessions')||'[]');
+    const sName = SCENARIOS[scenario]?.name||scenario;
+    sessions.unshift({scenario: sName, score, date:new Date().toISOString()});
+    if(sessions.length>50)sessions.splice(50);
+    localStorage.setItem('ripost_sessions',JSON.stringify(sessions));
+    saveSessionCloud(sName, score);
+  }catch(e){}
+}
+
+function sendMsg(){
+  const ta=document.getElementById('ci-ta');
+  const text=ta.value.trim();
+  if(!text||ta.disabled)return;
+
+  const body=document.getElementById('chat-body');
+  const d=document.createElement('div');
+  d.className='cmsg user';
+  d.innerHTML=`<div class="cmsg-b">${esc(text)}</div><div class="cmsg-av usr">👤</div>`;
+  body.appendChild(d);body.scrollTop=body.scrollHeight;
+  ta.value='';document.getElementById('ci-chars').textContent='0';autoResize(ta);
+
+  exchCount++;
+  document.getElementById('ctb-exc').textContent=`${exchCount} / ${MAX_EXCH}`;
+
+  if(exchCount>=MAX_EXCH){
+    ta.disabled=true;document.getElementById('ci-send').disabled=true;
+    addAI('',true);
+  }else{
+    const responses=SCENARIOS[currentScenario].ai;
+    const fn=responses[aiIdx];aiIdx=Math.min(aiIdx+1,responses.length-1);
+    addAI(fn(text));
+  }
+}
+
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function updateChars(){document.getElementById('ci-chars').textContent=document.getElementById('ci-ta').value.length;}
+document.getElementById('ci-ta').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+
+// Toast
+let tt;
+function showToast(icon,msg){
+  document.getElementById('t-ico').textContent=icon;
+  document.getElementById('t-msg').textContent=msg;
+  const t=document.getElementById('toast');t.classList.add('show');
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),4500);
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+
+<!-- ╔══ AUTH MODAL ══╗ -->
+<div class="modal-overlay" id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(7,7,13,.88);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:1rem" onclick="function(e){if(e.target===this)this.classList.remove('show')}">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:2.5rem;max-width:400px;width:100%;animation:modalIn .4s cubic-bezier(.34,1.56,.64,1)">
+    <h3 id="auth-modal-title" style="font-family:var(--font-d);font-size:1.4rem;font-weight:800;margin-bottom:.5rem;text-align:center">Zaloguj się</h3>
+    <p style="color:var(--text2);font-size:.875rem;text-align:center;margin-bottom:1.5rem">Zapisuj historię sesji i synchronizuj postępy.</p>
+    <div id="auth-err" style="display:none;color:#ff6b9d;font-size:.8rem;margin-bottom:.75rem;text-align:center"></div>
+    <input id="auth-email" type="email" placeholder="Email" style="width:100%;padding:.825rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font-b);font-size:.95rem;outline:none;margin-bottom:.75rem;display:block"/>
+    <input id="auth-password" type="password" placeholder="Hasło (min. 8 znaków)" style="width:100%;padding:.825rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font-b);font-size:.95rem;outline:none;margin-bottom:1.25rem;display:block"/>
+    <button id="auth-submit" onclick="submitAuth()" style="width:100%;padding:.875rem;background:linear-gradient(135deg,#6c63ff,#ff6b9d);border:none;border-radius:100px;color:#fff;font-family:var(--font-d);font-weight:700;font-size:.95rem;cursor:pointer;margin-bottom:1rem">Zaloguj</button>
+    <p id="auth-switch" style="text-align:center;font-size:.82rem;color:var(--text2)">Nie masz konta? <span style="color:var(--accent3);cursor:pointer" onclick="showAuthModal('register')">Zarejestruj się</span></p>
+    <button onclick="document.getElementById('auth-overlay').classList.remove('show')" style="display:block;width:100%;background:none;border:none;color:var(--text3);font-size:.8rem;cursor:pointer;margin-top:.875rem;font-family:var(--font-b)">Zamknij</button>
+  </div>
+</div>
+
+<style>
+#auth-overlay{display:none!important}
+#auth-overlay.show{display:flex!important}
+@keyframes modalIn{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+</style>
+
+
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(7,7,13,.9);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:2.5rem;max-width:400px;width:100%;animation:modalIn .4s cubic-bezier(.34,1.56,.64,1)">
+    <h3 id="auth-modal-title" style="font-family:var(--font-d);font-size:1.4rem;font-weight:800;margin-bottom:.5rem;text-align:center">Zaloguj się</h3>
+    <p style="color:var(--text2);font-size:.875rem;text-align:center;margin-bottom:1.5rem">Zapisuj historię sesji i synchronizuj postępy.</p>
+    <div id="auth-err" style="display:none;color:#ff6b9d;font-size:.8rem;margin-bottom:.75rem;text-align:center;padding:.5rem;background:rgba(255,107,157,.08);border-radius:8px"></div>
+    <input id="auth-email" type="email" placeholder="Email" style="width:100%;padding:.825rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font-b);font-size:.95rem;outline:none;margin-bottom:.75rem;display:block;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/>
+    <input id="auth-password" type="password" placeholder="Hasło (min. 8 znaków)" style="width:100%;padding:.825rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font-b);font-size:.95rem;outline:none;margin-bottom:1.25rem;display:block;transition:border-color .2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/>
+    <button id="auth-submit" onclick="submitAuth()" style="width:100%;padding:.875rem;background:linear-gradient(135deg,#6c63ff,#ff6b9d);border:none;border-radius:100px;color:#fff;font-family:var(--font-d);font-weight:700;font-size:.95rem;cursor:pointer;margin-bottom:1rem;transition:opacity .2s">Zaloguj</button>
+    <p id="auth-switch" style="text-align:center;font-size:.82rem;color:var(--text2)">Nie masz konta? <span style="color:var(--accent3);cursor:pointer" onclick="showAuthModal('register')">Zarejestruj się</span></p>
+    <button onclick="document.getElementById('auth-overlay').classList.remove('show')" style="display:block;width:100%;background:none;border:none;color:var(--text3);font-size:.78rem;cursor:pointer;margin-top:.875rem;font-family:var(--font-b)">Zamknij</button>
+  </div>
+</div>
+<style>
+#auth-overlay{display:none!important}
+#auth-overlay.show{display:flex!important}
+</style>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl" data-theme="dark">
 <head>
+<script src="/_init.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <meta name="description" content="Pakiety od 29 zł. 1 symulacja, 5 symulacji lub nielimitowane. Zacznij trening negocjacji z AI."/>
@@ -744,13 +745,18 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const it=q.parentElement,an=it.querySelector('.faq-a'),op=it.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').classList.remove('open')});if(!op){it.classList.add('open');an.classList.add('open')}})});
 function handleBuy(priceId,plan,amount){
   showToast('🔐',`Przekierowuję do Stripe — ${plan} (${amount} zł)...`);
-  const stripe = Stripe('pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS');
-  stripe.redirectToCheckout({
-    lineItems:[{price:priceId,quantity:1}],
-    mode: plan==='Unlimited'?'subscription':'payment',
-    successUrl: 'https://ripost.vercel.app/app.html?success=1',
-    cancelUrl:  'https://ripost.vercel.app/pricing.html',
-  }).then(r=>{if(r.error)showToast('❌',r.error.message)});
+  try {
+    const stripe = Stripe('pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS');
+    stripe.redirectToCheckout({
+      lineItems:[{price:priceId,quantity:1}],
+      mode: plan==='Unlimited'?'subscription':'payment',
+      successUrl: window.location.origin+'/app.html?success=1',
+      cancelUrl:  window.location.origin+'/pricing.html',
+    }).then(r=>{if(r.error){showToast('❌',r.error.message);console.error(r.error);}});
+  } catch(e) {
+    showToast('❌','Błąd Stripe: '+e.message);
+    console.error(e);
+  }
 }
 </script>
 </body>

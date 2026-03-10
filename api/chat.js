@@ -2,7 +2,7 @@
  * Ripost AI – Netlify Function: /api/chat
  * Groq API z modelem LLaMA 3.1 70B
  */
-const GROQ_KEY = process.env.GROQ_API_KEY || process.env.GROQ_API_KEY || '';
+const GROQ_KEY = process.env.GROQ_API_KEY || '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';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',

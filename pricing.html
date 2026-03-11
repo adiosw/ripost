@@ -743,20 +743,20 @@ function closeModal(){const o=document.getElementById('modal-overlay');if(o)o.cl
 const _mo=document.getElementById('modal-overlay');if(_mo)_mo.addEventListener('click',function(e){if(e.target===this)closeModal()});
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const it=q.parentElement,an=it.querySelector('.faq-a'),op=it.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').classList.remove('open')});if(!op){it.classList.add('open');an.classList.add('open')}})});
-function handleBuy(priceId,plan,amount){
-  showToast('🔐',`Przekierowuję do Stripe — ${plan} (${amount} zł)...`);
-  try {
-    const stripe = Stripe('pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS');
-    stripe.redirectToCheckout({
-      lineItems:[{price:priceId,quantity:1}],
-      mode: plan==='Unlimited'?'subscription':'payment',
-      successUrl: window.location.origin+'/app.html?success=1',
-      cancelUrl:  window.location.origin+'/pricing.html',
-    }).then(r=>{if(r.error){showToast('❌',r.error.message);console.error(r.error);}});
-  } catch(e) {
-    showToast('❌','Błąd Stripe: '+e.message);
-    console.error(e);
-  }
+function handleBuy(priceId, plan, amount){
+  showToast('🔐', `Przekierowuję do Stripe...`);
+  const stripe = Stripe('pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS');
+  stripe.redirectToCheckout({
+    lineItems: [{price: priceId, quantity: 1}],
+    mode: plan === 'Unlimited' ? 'subscription' : 'payment',
+    successUrl: window.location.origin + '/app.html?success=1',
+    cancelUrl:  window.location.origin + '/pricing.html',
+  }).then(function(result) {
+    if (result.error) {
+      showToast('❌', result.error.message);
+      console.error(result.error);
+    }
+  });
 }
 </script>
 </body>

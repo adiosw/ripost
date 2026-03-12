@@ -744,18 +744,29 @@ const _mo=document.getElementById('modal-overlay');if(_mo)_mo.addEventListener('
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const it=q.parentElement,an=it.querySelector('.faq-a'),op=it.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').classList.remove('open')});if(!op){it.classList.add('open');an.classList.add('open')}})});
 function handleBuy(priceId, plan, amount){
-  showToast('🔐', `Przekierowuję do Stripe...`);
-  const stripe = Stripe('pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS');
-  stripe.redirectToCheckout({
-    lineItems: [{price: priceId, quantity: 1}],
-    mode: plan === 'Unlimited' ? 'subscription' : 'payment',
-    successUrl: window.location.origin + '/app.html?success=1',
-    cancelUrl:  window.location.origin + '/pricing.html',
-  }).then(function(result) {
-    if (result.error) {
-      showToast('❌', result.error.message);
-      console.error(result.error);
+  showToast('🔐', 'Łączę ze Stripe...');
+  fetch('/api/checkout', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      priceId: priceId,
+      mode: plan === 'Unlimited' ? 'subscription' : 'payment',
+      successUrl: 'https://ripost.vercel.app/app.html?success=1',
+      cancelUrl:  'https://ripost.vercel.app/pricing.html'
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      showToast('❌', data.error || 'Błąd płatności');
+      console.error('Checkout error:', data);
     }
+  })
+  .catch(e => {
+    showToast('❌', 'Błąd: ' + e.message);
+    console.error(e);
   });
 }
 </script>

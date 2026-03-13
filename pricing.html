@@ -573,7 +573,7 @@ footer{border-top:1px solid var(--border);padding:48px 4% 32px}
         <li><div class="pf-n">—</div><span style="color:var(--text3)">Eksport wyników</span></li>
         <li><div class="pf-n">—</div><span style="color:var(--text3)">Własne scenariusze</span></li>
       </ul>
-      <button class="price-btn pb-outline" onclick="handleBuy('price_1SwYi5QMrFDKS2ZZrdiQHJfo','Próbny',29)">Kup za 29 zł</button>
+      <button class="price-btn pb-outline" onclick="handleBuy(window.__CFG__?.p1,'Próbny',29)">Kup za 29 zł</button>
     </div>
 
     <!-- PRO — FEATURED -->
@@ -596,7 +596,7 @@ footer{border-top:1px solid var(--border);padding:48px 4% 32px}
         <li><div class="pf-y">✓</div><span>Ważność 90 dni</span></li>
         <li><div class="pf-n">—</div><span style="color:var(--text3)">Własne scenariusze</span></li>
       </ul>
-      <button class="price-btn pb-filled" onclick="handleBuy('price_1SwYjtQMrFDKS2ZZ1pOGZGmy','Pro',49)">Kup za 49 zł</button>
+      <button class="price-btn pb-filled" onclick="handleBuy(window.__CFG__?.p2,'Pro',49)">Kup za 49 zł</button>
     </div>
 
     <!-- UNLIMITED -->
@@ -618,7 +618,7 @@ footer{border-top:1px solid var(--border);padding:48px 4% 32px}
         <li><div class="pf-y">✓</div><span>Priorytetowe wsparcie</span></li>
         <li><div class="pf-y">✓</div><span>Własne scenariusze i skrypty</span></li>
       </ul>
-      <button class="price-btn pb-gold" onclick="handleBuy('price_1SwYkbQMrFDKS2ZZVbDBUurw','Unlimited',99)">Subskrybuj 99 zł/mies.</button>
+      <button class="price-btn pb-gold" onclick="handleBuy(window.__CFG__?.p3,'Unlimited',99)">Subskrybuj 99 zł/mies.</button>
     </div>
   </div>
 
@@ -747,7 +747,7 @@ function handleBuy(priceId, plan, amount){
   showToast('🔐', 'Łączę ze Stripe...');
   fetch('/api/checkout', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
       priceId: priceId,
       mode: plan === 'Unlimited' ? 'subscription' : 'payment',
@@ -757,17 +757,10 @@ function handleBuy(priceId, plan, amount){
   })
   .then(r => r.json())
   .then(data => {
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      showToast('❌', data.error || 'Błąd płatności');
-      console.error('Checkout error:', data);
-    }
+    if(data.url){ window.location.href = data.url; }
+    else { showToast('❌', data.error || 'Błąd płatności'); }
   })
-  .catch(e => {
-    showToast('❌', 'Błąd: ' + e.message);
-    console.error(e);
-  });
+  .catch(e => showToast('❌', 'Błąd: ' + e.message));
 }
 </script>
 </body>

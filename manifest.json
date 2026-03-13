@@ -1,7 +1,7 @@
 {
-  "name": "Ripost – AI Career Coach",
+  "name": "Ripost \u2013 AI Career Coach",
   "short_name": "Ripost AI",
-  "description": "Trenuj negocjacje z AI. Zdobądź podwyżkę.",
+  "description": "Trenuj negocjacje z AI. Zdob\u0105d\u017a podwy\u017ck\u0119.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#07070d",
@@ -39,7 +39,11 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "education", "business"],
+  "categories": [
+    "productivity",
+    "education",
+    "business"
+  ],
   "screenshots": [
     {
       "src": "/screenshots/desktop.png",

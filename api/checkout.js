@@ -6,8 +6,7 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
   if (req.method !== 'POST') { res.status(405).json({error:'Method not allowed'}); return; }
 
-  const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY;
-  if (!STRIPE_SECRET) { res.status(500).json({error:'Stripe nie skonfigurowany'}); return; }
+  const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY || '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';
 
   try {
     const { priceId, mode, successUrl, cancelUrl } = req.body;

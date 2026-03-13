@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl" data-theme="dark">
 <head>
+<script src="/_init.js"></script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="Ripost AI Trainer – trenuj negocjacje z AI. Podwyżka, awans, rekrutacja."/>
@@ -195,6 +196,70 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow:h
 .toast.show{display:flex;animation:toastIn 0.3s ease-out}
 @keyframes toastIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
   </style>
+
+<script>
+// ============================================================
+// RIPOST — System kodów Naffy
+// Każdy kod z Naffy to numer zamówienia (np. 1001, 2547 itd.)
+// Pakiet określamy przez prefiks który ustawiasz w Naffy:
+//   P-{numer} = Próbny (1 sesja)
+//   PRO-{numer} = Pro (5 sesji)
+//   UNL-{numer} = Unlimited (999 sesji / 7 dni)
+// Albo zwykły numer = domyślnie Próbny
+// ============================================================
+
+function ripostVerifyCode(code) {
+  if (!code || code.trim().length < 2) return null;
+  
+  const c = code.trim().toUpperCase().replace(/[^A-Z0-9\-]/g, '');
+  const stored = JSON.parse(localStorage.getItem('ripost_codes') || '{}');
+  
+  // Sprawdź czy kod już był użyty i ile sesji zostało
+  if (stored[c]) {
+    const data = stored[c];
+    // Unlimited — sprawdź czy 7 dni nie minęło
+    if (data.plan === 'unlimited') {
+      const daysLeft = 7 - Math.floor((Date.now() - data.activatedAt) / 86400000);
+      if (daysLeft <= 0) return {error: 'Kod wygasł (7 dni minęło)'};
+      return {valid: true, plan: 'unlimited', sessionsLeft: 999, daysLeft};
+    }
+    if (data.sessionsLeft <= 0) return {error: 'Wykorzystano wszystkie sesje'};
+    return {valid: true, plan: data.plan, sessionsLeft: data.sessionsLeft};
+  }
+  
+  // Nowy kod — ustal pakiet
+  let plan, sessionsLeft;
+  if (c.startsWith('UNL-') || c.startsWith('UNLIMITED-')) {
+    plan = 'unlimited'; sessionsLeft = 999;
+  } else if (c.startsWith('PRO-')) {
+    plan = 'pro'; sessionsLeft = 5;
+  } else if (c.startsWith('P-') || c.startsWith('PROBNY-')) {
+    plan = 'probny'; sessionsLeft = 1;
+  } else {
+    // Domyślnie Próbny dla zwykłego numeru zamówienia
+    plan = 'probny'; sessionsLeft = 1;
+  }
+  
+  // Zapisz aktywację
+  stored[c] = {plan, sessionsLeft, activatedAt: Date.now()};
+  localStorage.setItem('ripost_codes', JSON.stringify(stored));
+  return {valid: true, plan, sessionsLeft};
+}
+
+function ripostUseSession(code) {
+  const c = code.trim().toUpperCase().replace(/[^A-Z0-9\-]/g, '');
+  const stored = JSON.parse(localStorage.getItem('ripost_codes') || '{}');
+  if (!stored[c]) return false;
+  if (stored[c].plan !== 'unlimited') {
+    stored[c].sessionsLeft = Math.max(0, stored[c].sessionsLeft - 1);
+    localStorage.setItem('ripost_codes', JSON.stringify(stored));
+  }
+  return true;
+}
+
+window.ripostVerifyCode = ripostVerifyCode;
+window.ripostUseSession = ripostUseSession;
+</script>
 </head>
 <body>
 
@@ -218,17 +283,14 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow:h
     <span class="unlock-icon">🔑</span>
     <h1>Wpisz <span class="grad-1">kod dostępu</span></h1>
     <p>Wprowadź kod aktywacyjny po zakupie planu lub użyj kodu demo do testowania.</p>
-    <input type="text" class="code-input" id="access-code" placeholder="np. DEMO-2026 lub PRO-49" maxlength="20" autocomplete="off" spellcheck="false"/>
+    <input type="text" class="code-input" id="access-code" placeholder="Wpisz kod z emaila (np. 1234)" maxlength="20" autocomplete="off" spellcheck="false"/>
     <div class="unlock-err" id="unlock-err">❌ Nieprawidłowy kod. Sprawdź i spróbuj ponownie.</div>
     <button class="unlock-btn" onclick="handleUnlock()">Odblokuj dostęp →</button>
     <div class="divider">lub</div>
     <a href="pricing.html" class="buy-link">🛒 Kup plan i otrzymaj kod dostępu</a>
     <div class="hint-box">
       <p>🧪 Kody testowe (usuń przed produkcją):</p>
-      <div class="hint-code">DEMO-2026 <span class="hint-plan">→ START · 1 sim</span></div>
-      <div class="hint-code">PRO-49 <span class="hint-plan">→ PRO · 5 sim</span></div>
-      <div class="hint-code">UNLIMITED-99 <span class="hint-plan">→ UNLIMITED · ∞ · 30 dni</span></div>
-    </div>
+      </div>
   </div>
 </div>
 
@@ -294,13 +356,13 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow:h
 // ╔══════════════════════════════════════════╗
 // ║  RIPOST — KONFIGURACJA (gotowa do użycia) ║
 // ╚══════════════════════════════════════════╝
-const SUPABASE_URL  = 'https://dvatpruwsooftvhlpoqq.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2YXRwcnV3c29vZnR2aGxwb3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTg2ODEsImV4cCI6MjA4ODQ5NDY4MX0.TLd_x6zPADLbUxMdLlQIioAfiQdo86lrpLAnNKYKXbc';
-const GROQ_KEY      = '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';
-const STRIPE_PK          = 'pk_live_51SuXXTQMrFDKS2ZZdGuWix1foagsbgtEr3lEK2tWHucQddJ5qSoa0Z6dW8EeMh5dOtOUPLwT4JrV4Of7r2ziZ1jM00fPWt2PDS';
-const PRICE_STARTER_ID   = 'price_1SwYi5QMrFDKS2ZZrdiQHJfo';
-const PRICE_PRO_ID       = 'price_1SwYjtQMrFDKS2ZZ1pOGZGmy';
-const PRICE_UNLIMITED_ID = 'price_1SwYkbQMrFDKS2ZZVbDBUurw';
+const SUPABASE_URL  = window.SUPABASE_URL;
+const SUPABASE_ANON = window.SUPABASE_ANON;
+const GROQ_KEY      = '';
+const STRIPE_PK          = window.STRIPE_PK;
+const PRICE_STARTER_ID   = window.PRICE_29;
+const PRICE_PRO_ID       = window.PRICE_49;
+const PRICE_UNLIMITED_ID = window.PRICE_99;
 
 // Init Supabase
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -334,7 +396,7 @@ async function callGroqAI(messages, scenario) {
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer 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'},
+      headers:{'Content-Type':'application/json','Authorization':'Bearer GROQ_KEY_PLACEHOLDER'},
       body: JSON.stringify({
         model:'llama-3.1-70b-versatile',
         messages:[{role:'system',content:PROMPTS[scenario]||PROMPTS.salary},...messages],
@@ -392,7 +454,7 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.TWÓJ_KLUCZ'; // ←
 const GROQ_KEY      = 'gsk_TWÓJ_KLUCZ_GROQ';                // ← z console.groq.com
 
 // Stripe Price IDs (skopiuj z Stripe → Products)
-const STRIPE_PK           = 'pk_live_TWÓJ_PUBLISHABLE_KEY';
+const STRIPE_PK           = 'TWÓJ_STRIPE_PUBLISHABLE_KEY';
 const PRICE_STARTER_ID    = 'price_XXXXXXXXXXXXX';  // 29 zł
 const PRICE_PRO_ID        = 'price_XXXXXXXXXXXXX';  // 49 zł
 const PRICE_UNLIMITED_ID  = 'price_XXXXXXXXXXXXX';  // 99 zł/mies.
@@ -535,11 +597,41 @@ async function submitAuth() {
 
 <script>
 // ── ACCESS CODES ──────────────────────────────────────────
-const CODES = {
-  'DEMO-2026': {plan:'START', sims:1},
-  'PRO-49':    {plan:'PRO',   sims:5},
-  'UNLIMITED-99': {plan:'UNLIMITED', sims:Infinity}
-};
+// Kody Naffy — format: {numer_zamówienia} lub P-{nr} / PRO-{nr} / UNL-{nr}
+function getCodeData(raw) {
+  const c = raw.trim().toUpperCase().replace(/[^A-Z0-9\-]/g, '');
+  if (!c) return null;
+  
+  // Sprawdź localStorage czy kod był już użyty
+  const stored = JSON.parse(localStorage.getItem('naffy_codes') || '{}');
+  
+  if (stored[c]) {
+    const d = stored[c];
+    if (d.plan === 'UNLIMITED') {
+      const daysLeft = 7 - Math.floor((Date.now() - d.activatedAt) / 86400000);
+      if (daysLeft <= 0) return {error: 'Dostęp wygasł po 7 dniach'};
+      return {plan:'UNLIMITED', sims:Infinity};
+    }
+    if (d.sims <= 0) return {error: 'Wszystkie sesje zostały wykorzystane'};
+    return {plan: d.plan, sims: d.sims};
+  }
+  
+  // Nowy kod — ustal pakiet na podstawie prefiksu
+  let plan, sims;
+  if (c.startsWith('UNL') || c.startsWith('UNLIMITED')) {
+    plan = 'UNLIMITED'; sims = Infinity;
+  } else if (c.startsWith('PRO')) {
+    plan = 'PRO'; sims = 5;
+  } else {
+    // Domyślnie Próbny — zwykły numer zamówienia z Naffy
+    plan = 'START'; sims = 1;
+  }
+  
+  // Zapisz aktywację
+  stored[c] = {plan, sims, activatedAt: Date.now()};
+  localStorage.setItem('naffy_codes', JSON.stringify(stored));
+  return {plan, sims};
+}
 
 // ── SCENARIOS ─────────────────────────────────────────────
 const SCENARIOS = {
@@ -627,15 +719,16 @@ function handleUnlock(){
   const inp=document.getElementById('access-code');
   const err=document.getElementById('unlock-err');
   if(!raw){inp.classList.add('error');setTimeout(()=>inp.classList.remove('error'),400);return;}
-  const found=CODES[raw];
-  if(!found){
+  const found=getCodeData(raw);
+  if(!found||found.error){
+    err.textContent = found?.error || 'Nieprawidłowy kod dostępu';
     err.classList.add('show');inp.classList.add('error');
     setTimeout(()=>inp.classList.remove('error'),500);return;
   }
   err.classList.remove('show');
   plan=found.plan; simsLeft=found.sims;
   let expiry=null;
-  if(found.plan==='UNLIMITED'){const d=new Date();d.setDate(d.getDate()+30);expiry=d.toISOString();}
+  if(found.plan==='UNLIMITED'){const d=new Date();d.setDate(d.getDate()+7);expiry=d.toISOString();}
   try{
     localStorage.setItem('ripost_code',raw);
     localStorage.setItem('ripost_plan',plan);

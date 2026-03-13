@@ -370,7 +370,7 @@ $$ <span class="kw">LANGUAGE</span> plpgsql <span class="kw">SECURITY DEFINER</s
       <li class="instr-step"><div class="instr-n">2</div><div>W dashboardzie górne menu → <strong>Products</strong> → <strong>"Add product"</strong></div></li>
       <li class="instr-step"><div class="instr-n">3</div><div>Utwórz <strong>3 produkty</strong> (szczegóły poniżej)</div></li>
       <li class="instr-step"><div class="instr-n">4</div><div>Po zapisaniu każdego produktu kliknij go → skopiuj <strong>Price ID</strong> (zaczyna się od <code style="font-family:var(--font-m);font-size:.78rem">price_...</code>)</div></li>
-      <li class="instr-step"><div class="instr-n">5</div><div>Stripe → <strong>Developers</strong> → <strong>API Keys</strong> → skopiuj <strong>Publishable key</strong> (<code style="font-family:var(--font-m);font-size:.78rem">pk_live_...</code>)</div></li>
+      <li class="instr-step"><div class="instr-n">5</div><div>Stripe → <strong>Developers</strong> → <strong>API Keys</strong> → skopiuj <strong>Publishable key</strong> (<code style="font-family:var(--font-m);font-size:.78rem">STRIPE_PK...</code>)</div></li>
     </ul>
   </div>
   <div class="instr" style="margin-top:1.25rem">
@@ -383,7 +383,7 @@ $$ <span class="kw">LANGUAGE</span> plpgsql <span class="kw">SECURITY DEFINER</s
   </div>
   <div class="key-box">
     <h4>📋 Masz teraz 4 wartości Stripe:</h4>
-    <div class="key-row"><span class="key-label">STRIPE_PUBLISHABLE</span><span class="key-val">pk_live_twójklucz...</span></div>
+    <div class="key-row"><span class="key-label">STRIPE_PUBLISHABLE</span><span class="key-val">TWÓJ_STRIPE_PK...</span></div>
     <div class="key-row"><span class="key-label">PRICE_STARTER</span><span class="key-val">price_xxxxxxxxxxxx (29 zł)</span></div>
     <div class="key-row"><span class="key-label">PRICE_PRO</span><span class="key-val">price_xxxxxxxxxxxx (49 zł)</span></div>
     <div class="key-row"><span class="key-label">PRICE_UNLIMITED</span><span class="key-val">price_xxxxxxxxxxxx (99 zł/mies.)</span></div>
@@ -408,7 +408,7 @@ $$ <span class="kw">LANGUAGE</span> plpgsql <span class="kw">SECURITY DEFINER</s
 <span class="kw">const</span> GROQ_KEY      = <span class="str">'gsk_TWÓJ_KLUCZ_GROQ'</span>;
 
 <span class="cm">// Stripe — Price IDs (skopiuj z dashboardu Stripe)</span>
-<span class="kw">const</span> STRIPE_PK        = <span class="str">'pk_live_TWÓJ_PUBLISHABLE_KEY'</span>;
+<span class="kw">const</span> STRIPE_PK        = <span class="str">'TWÓJ_STRIPE_PUBLISHABLE_KEY'</span>;
 <span class="kw">const</span> PRICE_STARTER    = <span class="str">'price_XXXXXXXXXXXX'</span>;  <span class="cm">// 29 zł</span>
 <span class="kw">const</span> PRICE_PRO        = <span class="str">'price_XXXXXXXXXXXX'</span>;  <span class="cm">// 49 zł</span>
 <span class="kw">const</span> PRICE_UNLIMITED  = <span class="str">'price_XXXXXXXXXXXX'</span>;  <span class="cm">// 99 zł/mies.</span></pre>

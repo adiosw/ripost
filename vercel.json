@@ -11,7 +11,7 @@
       "use": "@vercel/static"
     },
     {
-      "src": "_init.js",
+      "src": "*.js",
       "use": "@vercel/static"
     },
     {
@@ -19,7 +19,7 @@
       "use": "@vercel/static"
     },
     {
-      "src": "*.js",
+      "src": "assets/**",
       "use": "@vercel/static"
     }
   ],
@@ -45,11 +45,15 @@
       "dest": "/api/chat.js"
     },
     {
-      "src": "/",
-      "dest": "/index.html"
+      "src": "/api/checkout",
+      "dest": "/api/checkout.js"
     },
     {
-      "src": "/index",
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/",
       "dest": "/index.html"
     },
     {

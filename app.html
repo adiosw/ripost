@@ -280,17 +280,14 @@ window.ripostUseSession = ripostUseSession;
 <!-- ═══ UNLOCK ═══ -->
 <div class="screen active" id="unlock-screen">
   <div class="unlock-wrap">
-    <span class="unlock-icon">🔑</span>
-    <h1>Wpisz <span class="grad-1">kod dostępu</span></h1>
-    <p>Wprowadź kod aktywacyjny po zakupie planu lub użyj kodu demo do testowania.</p>
-    <input type="text" class="code-input" id="access-code" placeholder="Wpisz kod z emaila (np. 1234)" maxlength="20" autocomplete="off" spellcheck="false"/>
-    <div class="unlock-err" id="unlock-err">❌ Nieprawidłowy kod. Sprawdź i spróbuj ponownie.</div>
+    <span class="unlock-icon">🥊</span>
+    <h1>Odblokuj <span class="grad-1">dostęp</span></h1>
+    <p>Wpisz adres email użyty przy zakupie. Twój dostęp zostanie aktywowany natychmiast.</p>
+    <input type="email" class="code-input" id="access-code" placeholder="twoj@email.com" maxlength="100" autocomplete="email" spellcheck="false"/>
+    <div class="unlock-err" id="unlock-err">❌ Podaj prawidłowy adres email.</div>
     <button class="unlock-btn" onclick="handleUnlock()">Odblokuj dostęp →</button>
     <div class="divider">lub</div>
-    <a href="pricing.html" class="buy-link">🛒 Kup plan i otrzymaj kod dostępu</a>
-    <div class="hint-box">
-      <p>🧪 Kody testowe (usuń przed produkcją):</p>
-      </div>
+    <a href="pricing.html" class="buy-link">🛒 Kup dostęp — od 29 zł</a>
   </div>
 </div>
 
@@ -598,35 +595,50 @@ async function submitAuth() {
 <script>
 // ── ACCESS CODES ──────────────────────────────────────────
 // Kody Naffy — format: {numer_zamówienia} lub P-{nr} / PRO-{nr} / UNL-{nr}
+function getPlanFromURL() {
+  // Czyta ?plan=start / ?plan=pro / ?plan=unlimited z URL
+  try {
+    const p = new URLSearchParams(window.location.search).get('plan') || '';
+    const plan = p.toUpperCase();
+    if (plan === 'UNLIMITED') return { plan: 'UNLIMITED', sims: Infinity };
+    if (plan === 'PRO')       return { plan: 'PRO',       sims: 5 };
+    if (plan === 'START')     return { plan: 'START',     sims: 1 };
+  } catch(e) {}
+  return null;
+}
+
 function getCodeData(raw) {
   const c = raw.trim().toUpperCase().replace(/[^A-Z0-9\-]/g, '');
   if (!c) return null;
-  
+
   // Sprawdź localStorage czy kod był już użyty
   const stored = JSON.parse(localStorage.getItem('naffy_codes') || '{}');
-  
+
   if (stored[c]) {
     const d = stored[c];
     if (d.plan === 'UNLIMITED') {
-      const daysLeft = 7 - Math.floor((Date.now() - d.activatedAt) / 86400000);
-      if (daysLeft <= 0) return {error: 'Dostęp wygasł po 7 dniach'};
+      const daysLeft = 30 - Math.floor((Date.now() - d.activatedAt) / 86400000);
+      if (daysLeft <= 0) return {error: 'Dostęp wygasł po 30 dniach'};
       return {plan:'UNLIMITED', sims:Infinity};
     }
     if (d.sims <= 0) return {error: 'Wszystkie sesje zostały wykorzystane'};
     return {plan: d.plan, sims: d.sims};
   }
-  
-  // Nowy kod — ustal pakiet na podstawie prefiksu
+
+  // Nowy kod — najpierw sprawdź ?plan= w URL
+  const urlPlan = getPlanFromURL();
   let plan, sims;
-  if (c.startsWith('UNL') || c.startsWith('UNLIMITED')) {
+  if (urlPlan) {
+    plan = urlPlan.plan;
+    sims = urlPlan.sims;
+  } else if (c.startsWith('UNL') || c.startsWith('UNLIMITED')) {
     plan = 'UNLIMITED'; sims = Infinity;
   } else if (c.startsWith('PRO')) {
     plan = 'PRO'; sims = 5;
   } else {
-    // Domyślnie Próbny — zwykły numer zamówienia z Naffy
     plan = 'START'; sims = 1;
   }
-  
+
   // Zapisz aktywację
   stored[c] = {plan, sims, activatedAt: Date.now()};
   localStorage.setItem('naffy_codes', JSON.stringify(stored));
@@ -697,7 +709,7 @@ themeBtn.addEventListener('click',()=>{isDark=!isDark;applyTheme();});
 // ── SESSION RESTORE ───────────────────────────────────────
 window.addEventListener('load',()=>{
   try{
-    const code=localStorage.getItem('ripost_code');
+    const code=localStorage.getItem('ripost_email');
     const savedPlan=localStorage.getItem('ripost_plan');
     const simsRaw=localStorage.getItem('ripost_sims');
     const expiry=localStorage.getItem('ripost_expiry');
@@ -714,28 +726,60 @@ function clearStorage(){
 }
 
 // ── UNLOCK ────────────────────────────────────────────────
+function isValidEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+
 function handleUnlock(){
-  const raw=document.getElementById('access-code').value.trim().toUpperCase();
-  const inp=document.getElementById('access-code');
-  const err=document.getElementById('unlock-err');
-  if(!raw){inp.classList.add('error');setTimeout(()=>inp.classList.remove('error'),400);return;}
-  const found=getCodeData(raw);
-  if(!found||found.error){
-    err.textContent = found?.error || 'Nieprawidłowy kod dostępu';
-    err.classList.add('show');inp.classList.add('error');
-    setTimeout(()=>inp.classList.remove('error'),500);return;
+  const email = document.getElementById('access-code').value.trim().toLowerCase();
+  const inp   = document.getElementById('access-code');
+  const err   = document.getElementById('unlock-err');
+
+  if(!email || !isValidEmail(email)){
+    err.textContent = '❌ Podaj prawidłowy adres email.';
+    err.classList.add('show'); inp.classList.add('error');
+    setTimeout(()=>inp.classList.remove('error'),500); return;
   }
   err.classList.remove('show');
-  plan=found.plan; simsLeft=found.sims;
-  let expiry=null;
-  if(found.plan==='UNLIMITED'){const d=new Date();d.setDate(d.getDate()+7);expiry=d.toISOString();}
+
+  // Pobierz plan z URL (?plan=start/pro/unlimited)
+  const urlPlan = (new URLSearchParams(window.location.search).get('plan')||'start').toUpperCase();
+  let planName, sims;
+  if(urlPlan==='UNLIMITED'){ planName='UNLIMITED'; sims=Infinity; }
+  else if(urlPlan==='PRO'){   planName='PRO';       sims=5; }
+  else {                      planName='START';      sims=1; }
+
+  // Zapisz dostęp
+  const key = 'ripost_access_' + email.replace(/[^a-z0-9]/g,'_');
+  const existing = JSON.parse(localStorage.getItem(key)||'null');
+
+  if(existing){
+    // Użytkownik już aktywował — przywróć
+    if(existing.plan==='UNLIMITED'){
+      const daysLeft = 30 - Math.floor((Date.now()-existing.activatedAt)/86400000);
+      if(daysLeft<=0){
+        err.textContent='❌ Twój dostęp UNLIMITED wygasł po 30 dniach.';
+        err.classList.add('show'); return;
+      }
+    }
+    if(existing.sims<=0 && existing.plan!=='UNLIMITED'){
+      err.textContent='❌ Wszystkie sesje zostały wykorzystane. Kup nowy pakiet.';
+      err.classList.add('show'); return;
+    }
+    plan=existing.plan; simsLeft=existing.plan==='UNLIMITED'?Infinity:existing.sims;
+  } else {
+    // Nowy użytkownik
+    const data = {plan:planName, sims:sims===Infinity?999:sims, activatedAt:Date.now(), email};
+    localStorage.setItem(key, JSON.stringify(data));
+    plan=planName; simsLeft=sims;
+  }
+
+  // Zapisz aktywną sesję
   try{
-    localStorage.setItem('ripost_code',raw);
-    localStorage.setItem('ripost_plan',plan);
-    localStorage.setItem('ripost_sims',simsLeft===Infinity?'unlimited':simsLeft);
-    if(expiry)localStorage.setItem('ripost_expiry',expiry);
+    localStorage.setItem('ripost_email', email);
+    localStorage.setItem('ripost_plan',  plan);
+    localStorage.setItem('ripost_sims',  simsLeft===Infinity?'unlimited':simsLeft);
   }catch(e){}
-  showToast('✅',`Dostęp odblokowany! Plan ${plan} aktywny.`);
+
+  showToast('✅',`Witaj! Plan ${plan} aktywny.`);
   setTimeout(()=>{showScreen('scenario');updateBar();},500);
 }
 document.getElementById('access-code').addEventListener('keydown',e=>{if(e.key==='Enter')handleUnlock();});

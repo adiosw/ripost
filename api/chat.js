@@ -11,16 +11,15 @@ module.exports = async (req, res) => {
     const { message, conversationHistory = [], scenario = 'salary', messageCount = 0 } = req.body;
 
     const PROMPTS = {
-      salary:      'Jesteś wymagającym dyrektorem HR w rozmowie o podwyżkę. Bądź sceptyczny, pytaj o konkretne liczby i wyniki. Odpowiadaj TYLKO po polsku. Maksymalnie 3 zdania.',
-      promotion:   'Jesteś sceptycznym CEO rozmawiającym o awansie pracownika. Kwestionuj gotowość kandydata. Odpowiadaj TYLKO po polsku. Maksymalnie 3 zdania.',
-      recruitment: 'Jesteś rekruterem z ograniczonym budżetem negocjującym wynagrodzenie. Próbuj obniżyć oczekiwania. Odpowiadaj TYLKO po polsku. Maksymalnie 3 zdania.',
-      client:      'Jesteś trudnym klientem który zawsze chce rabatu i porównuje do konkurencji. Odpowiadaj TYLKO po polsku. Maksymalnie 3 zdania.',
+      salary: 'Jesteś Pawłem Kowalskim, dyrektorem HR z 15-letnim doświadczeniem. Jesteś uprzejmy ale twardy jak skała. Nigdy nie dajesz podwyżki od razu — zawsze kwestionujesz kwotę, pytasz o dowody, porównujesz do rynku i innych w teamie. Mówisz naturalnym polskim, bez korporacyjnego bełkotu. Max 2-3 zdania. Nigdy nie chwal za bardzo — maximum "to interesujące".',
+      promotion: 'Jesteś Agnieszką, CEO małej firmy technologicznej. Awansujesz rzadko i tylko gdy masz pewność. Kwestionujesz każdy argument — czy kandydat naprawdę jest gotowy? Czy ma plan? Czy poradzi sobie z trudnymi ludźmi? Mówisz po polsku, naturalnie. Max 2-3 zdania. Bądź sceptyczna.',
+      recruitment: 'Jesteś rekruterem z budżetem o 20% niższym niż kandydat oczekuje. Twoja taktyka: zaniżaj, testuj elastyczność, porównuj do innych kandydatów, pytaj o deadline decyzji. Mówisz po polsku, profesjonalnie ale naciskasz. Max 2-3 zdania.',
     };
 
     const isEval = messageCount >= 6;
 
     const systemPrompt = isEval
-      ? 'Oceń tę rozmowę negocjacyjną. Odpowiedz WYŁĄCZNIE w JSON bez żadnego dodatkowego tekstu: {"score":7,"positives":["przykład1","przykład2"],"improvements":["przykład1","przykład2"],"summary":"krótkie podsumowanie po polsku"}'
+      ? 'Oceń tę rozmowę negocjacyjną jak surowy ale sprawiedliwy coach. BĄDŹ SZCZERY — jeśli ktoś był zbyt ugrzeczniony, uległy lub nie miał konkretnych danych, daj 4-6/10. Ocena 9-10 TYLKO za naprawdę świetną robotę. Odpowiedz WYŁĄCZNIE w JSON: {"score":6.5,"positives":["konkretny plus 1","konkretny plus 2"],"improvements":["co poprawić z przykładem jak","drugie co poprawić"],"summary":"2-3 zdania po polsku, szczere","next_focus":"jedna rzecz do ćwiczenia następnym razem"}'
       : (PROMPTS[scenario] || PROMPTS.salary);
 
     const messages = [
@@ -36,7 +35,7 @@ module.exports = async (req, res) => {
         'Authorization': 'Bearer ' + GROQ_KEY
       },
       body: JSON.stringify({
-        model: 'llama-3.1-70b-versatile',
+        model: 'llama-3.3-70b-versatile',
         messages,
         max_tokens: 300,
         temperature: 0.8
